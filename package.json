@@ -102,6 +102,7 @@
   "dependencies": {
     "@red-cup-engineering/animating": "0.0.0",
     "@red-cup-engineering/content": "0.0.1",
+    "@red-cup-engineering/html-file-codec-service": "workspace:*",
     "@red-cup-engineering/relating": "0.0.0",
     "@red-cup-engineering/computing-with-http": "0.0.0",
     "@red-cup-engineering/http-server": "0.0.0"

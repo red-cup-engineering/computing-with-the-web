@@ -1,5 +1,5 @@
 import { mark, type ChargeValueName, type UtteranceCarrier } from "@red-cup-engineering/relating";
-import { escapeHtmlText } from "@red-cup-engineering/content/codecs/feed";
+import { attrs, el, escapeHtml as escapeHtmlText } from "@red-cup-engineering/html-file-codec-service/string-rendering";
 import { settleLessonJudgments, utterEvidenceSet, type LessonSettlement, type LessonEvidence } from "@red-cup-engineering/animating/becoming/doing/working/learning/lessons";
 import {
   themePalette,
@@ -83,11 +83,6 @@ export type ThemeLessonJudgment = {
 
 export const THEME_MEMBERS = Object.freeze(["name", "head", "header", "footer", "wrap", "css"] as const);
 
-const VOID_ELEMENTS = new Set([
-  "area", "base", "br", "col", "embed", "hr", "img", "input",
-  "link", "meta", "param", "source", "track", "wbr",
-]);
-
 const LANDMARK_ROLE = Object.freeze({
   header: "banner",
   nav: "navigation",
@@ -95,30 +90,7 @@ const LANDMARK_ROLE = Object.freeze({
   footer: "contentinfo",
 });
 
-function isVoidElement(tag: string): boolean {
-  return VOID_ELEMENTS.has(tag);
-}
-
-export function attrs(map?: Record<string, unknown> | null): string {
-  if (!map) return "";
-  let out = "";
-  for (const [name, value] of Object.entries(map)) {
-    if (value === null || value === undefined || value === false) continue;
-    if (value === true) {
-      out += ` ${name}`;
-      continue;
-    }
-    out += ` ${name}="${escapeHtmlText(value)}"`;
-  }
-  return out;
-}
-
-export function el(tag: string, attributes?: Record<string, unknown> | null, children?: string | readonly string[]): string {
-  const open = `<${tag}${attrs(attributes)}`;
-  if (isVoidElement(tag)) return `${open} />`;
-  const inner = Array.isArray(children) ? children.join("") : children ?? "";
-  return `${open}>${inner}</${tag}>`;
-}
+export { attrs, el };
 
 export function meta(name: string, content: unknown): string {
   if (content === null || content === undefined || content === "") return "";
