@@ -1,5 +1,5 @@
 import { jsonRepr as serverJsonRepr, wellKnown, type App, type Repr, type Resource } from "@red-cup-engineering/computing-with-http/app";
-import { assertHttpUrl } from "@red-cup-engineering/content/codecs/feed";
+import { assertHttpUrl } from "@red-cup-engineering/uri-services-section/http-url";
 
 export type JsonRecord = Record<string, unknown>;
 

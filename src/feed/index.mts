@@ -3,7 +3,7 @@
  *
  * The serializers themselves (RSS 2.0, Atom, JSON Feed, sitemaps, news sitemap,
  * robots.txt, and the RFC-3339/XML helpers) are content codecs and live in
- * `@red-cup-engineering/content/codecs/feed` — they are formats, not transport. This module
+ * `@red-cup-engineering/computer-serialized-content-engineering-services-section/web-feed` — they are formats, not transport. This module
  * re-exports them unchanged (so existing `@red-cup-engineering/computing-with-the-web/feed` consumers keep
  * working) and adds the transport-coupled pieces that genuinely belong to web:
  * the WebSub `Link` header and the `feedApp` resource builder.
@@ -26,9 +26,9 @@ import {
   newsSitemap,
   robots,
   type WebSubDiscovery,
-} from "@red-cup-engineering/content/codecs/feed";
+} from "@red-cup-engineering/computer-serialized-content-engineering-services-section/web-feed";
 
-export * from "@red-cup-engineering/content/codecs/feed";
+export * from "@red-cup-engineering/computer-serialized-content-engineering-services-section/web-feed";
 
 export type FeedAppOptions = {
   channel: FeedChannel;

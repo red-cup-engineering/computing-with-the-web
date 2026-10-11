@@ -3,7 +3,8 @@ import { mark, type ChargeValueName, type UtteranceCarrier } from "@red-cup-engi
 import { joinKnowledgeNames } from "@red-cup-engineering/animating/becoming/doing/algebra";
 import { utterEvidence } from "@red-cup-engineering/animating/becoming/doing/working/learning/lessons";
 import { linkHeader } from "@red-cup-engineering/computing-with-http/codecs/http";
-import { assertHttpUrl, escapeHtmlText } from "../feed/index.mjs";
+import { assertHttpUrl } from "@red-cup-engineering/uri-services-section/http-url";
+import { escapeHtmlText } from "../feed/index.mjs";
 
 export type PageLinks = {
   self: string;
