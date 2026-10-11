@@ -2,7 +2,7 @@
 //
 // MCP's protocol vocabulary is HTTP-adjacent, so its reusable value layer lives
 // in @red-cup-engineering/computing-with-http. Service bindings such as createMcpApp live in
-// @red-cup-engineering/http-server; this library package deliberately does not import
+// @red-cup-engineering/computer-web-server; this library package deliberately does not import
 // service packages.
 
 export {
