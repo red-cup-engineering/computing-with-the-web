@@ -92,11 +92,11 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
-    "@red-cup-engineering/animating": "0.0.2",
+    "@red-cup-engineering/animating": "workspace:*",
     "@red-cup-engineering/content": "0.0.1",
-    "@red-cup-engineering/html-file-codec-service": "0.1.1",
-    "@red-cup-engineering/relating": "0.0.1",
-    "@red-cup-engineering/computing-with-http": "0.0.0",
+    "@red-cup-engineering/html-file-codec-service": "workspace:*",
+    "@red-cup-engineering/relating": "workspace:*",
+    "@red-cup-engineering/computing-with-http": "workspace:*",
     "@red-cup-engineering/http-server": "0.0.2"
   },
   "devDependencies": {
