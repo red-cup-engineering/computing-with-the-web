@@ -11,6 +11,7 @@
     "clean": "rm -rf dist .tmp/test-dist",
     "check": "tsc --noEmit",
     "build": "tsc -p tsconfig.build.json",
+    "test": "npm run build && tsc -p tsconfig.test.json && node --test .tmp/test-dist/webmention/index.test.mjs",
     "prepack": "npm run rebuild",
     "rebuild": "npm run clean && npm run build"
   },
