@@ -15,3 +15,4 @@ export * as theming from "./theming/index.mjs";
 export * as themingComputer from "./theming-computer/index.mjs";
 export * as topology from "./topology/index.mjs";
 export * as webmention from "./webmention/index.mjs";
+export * as triplePatternFragments from "./triple-pattern-fragments/index.mjs";
