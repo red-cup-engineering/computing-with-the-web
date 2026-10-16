@@ -40,12 +40,6 @@ export function exchange(source: Node, target: Node, label: ExchangeLabel): Exch
   });
 }
 
-/**
- * The canonical textual form of a label: "method medium". Traversal cells
- * use this as their predicate term because cell identity must survive
- * serialization — bedrock marks of structured values coincide only by
- * reference (Object.is) and lose identity across dehydrate/rehydrate,
- * while strings coincide by value everywhere. The single space is the
- * separator; both components are whitespace-free tokens by construction.
- */
-export const labelText = (label: ExchangeLabel): string => `${label.method} ${label.medium}`;
+/** A method/medium predicate rendered with one space; each component is a
+ * whitespace-free token. SignCell supplies content identity after transport. */
+export const labelText = (label: ExchangeLabel): string => label.method + " " + label.medium;
