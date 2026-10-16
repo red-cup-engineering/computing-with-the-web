@@ -1,6 +1,6 @@
-import { mark, type ChargeValueName, type UtteranceCarrier } from "@red-cup-engineering/relating";
+import { mark, webEvidence, type WebEvidence, type Utterance } from "../evidence.mjs";
+import { joinKnowledgeReadings, type KnowledgeReading } from "../taxonomy/four.mjs";
 import { attrs, el, escapeHtml as escapeHtmlText } from "@red-cup-engineering/html-file-codec-service/string-rendering";
-import { settleLessonJudgments, utterEvidenceSet, type LessonSettlement, type LessonEvidence } from "@red-cup-engineering/animating/becoming/doing/working/learning/lessons";
 import {
   themePalette,
   tokenVar,
@@ -64,19 +64,25 @@ export type Theme = {
   css: string;
 };
 
+export type ThemeAssessment = Readonly<{
+  kind: "web.theme-assessment";
+  value: KnowledgeReading;
+  judgments: readonly ThemeJudgment[];
+}>;
+
 export type ThemeAdmission = {
   themeName: string;
   admitted: boolean;
-  value: ChargeValueName;
-  judgments: readonly ThemeLessonJudgment[];
-  entries: readonly LessonEvidence[];
-  utterances: readonly UtteranceCarrier[];
-  settlement: LessonSettlement;
+  value: KnowledgeReading;
+  judgments: readonly ThemeJudgment[];
+  entries: readonly WebEvidence[];
+  utterances: readonly Utterance[];
+  settlement: ThemeAssessment;
   reasons: readonly string[];
 };
 
-export type ThemeLessonJudgment = {
-  value: ChargeValueName;
+export type ThemeJudgment = {
+  value: KnowledgeReading;
   reason: string;
   path: string;
 };
@@ -382,8 +388,8 @@ export function assertTheme(value: unknown): asserts value is Theme {
   if (typeof theme.css !== "string") throw new TypeError('theme.css: expected a string (use "" if linked)');
 }
 
-function themeLessonJudgments(value: unknown): ThemeLessonJudgment[] {
-  const judgments: ThemeLessonJudgment[] = [];
+function themeJudgments(value: unknown): ThemeJudgment[] {
+  const judgments: ThemeJudgment[] = [];
   const theme = value as Record<string, unknown> | null;
   if (value === null || typeof value !== "object") {
     return [{ value: "active", reason: "theme value is not an object", path: "theme" }];
@@ -406,18 +412,22 @@ function themeLessonJudgments(value: unknown): ThemeLessonJudgment[] {
 
 export function admitTheme(value: unknown): ThemeAdmission {
   const name = typeof (value as { name?: unknown } | null)?.name === "string" ? String((value as { name: string }).name) : "anonymous";
-  const judgments = Object.freeze(themeLessonJudgments(value));
+  const judgments = Object.freeze(themeJudgments(value));
   const subject = mark(Object.freeze(["theme", name] as const));
   // A judgment made good claims satisfaction; a failed judgment claims the
   // contrary predicate — its own fact, never a denial of the first.
-  const entries = Object.freeze(judgments.map((judgment) => ({
+  const entries = Object.freeze(judgments.map((judgment) => webEvidence(
     subject,
-    predicate: mark(judgment.value === "potential" ? "satisfies-theme-contract" : "violates-theme-contract"),
-    object: mark(judgment.path),
-    provenance: judgment.reason,
-  } satisfies LessonEvidence)));
-  const utterances = utterEvidenceSet(entries);
-  const settlement = settleLessonJudgments(judgments.map((judgment) => ({ name: "theme-contract", ...judgment })));
+    mark(judgment.value === "potential" ? "satisfies-theme-contract" : "violates-theme-contract"),
+    mark(judgment.path),
+    judgment.reason,
+  )));
+  const utterances = Object.freeze(entries.map((entry) => entry.utterance));
+  const settlement: ThemeAssessment = Object.freeze({
+    kind: "web.theme-assessment",
+    value: judgments.reduce<KnowledgeReading>((value, judgment) => joinKnowledgeReadings(value, judgment.value), "absurd"),
+    judgments,
+  });
   return {
     themeName: name,
     admitted: settlement.value === "potential",

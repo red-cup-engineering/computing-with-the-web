@@ -1,0 +1,83 @@
+{
+  "observedAt": "2026-10-16T10:42:08.488Z",
+  "historicalSource": {
+    "url": "https://github.com/emsenn/web-indieauth/blob/c3d61b29e0688edab71c88b83f2308399e2b74b3/src/index.mts",
+    "blob": "3d79706d711464f59e97233f10b567251ec0a8b0"
+  },
+  "historicalTests": {
+    "url": "https://github.com/emsenn/web-indieauth/blob/c3d61b29e0688edab71c88b83f2308399e2b74b3/src/index.test.mts",
+    "blob": "4dc262dd05b3bea3d1ceefb4ee689512a4fbef2d"
+  },
+  "extraction": "Exact AST-selected historical functions, TypeScript erasure only; comparison changes only canonicalJson's implementation to genuine JSON 0.4.0 canonicalJson(requireJsonValue(...)).",
+  "node": "v24.19.0",
+  "fixtures": [
+    {
+      "name": "original self-contained HMAC case",
+      "params": {
+        "me": "https://example.org/",
+        "client_id": "https://client.example/app",
+        "scope": [
+          "create",
+          "update"
+        ],
+        "expiresIn": 60,
+        "now": 1000,
+        "extra": {
+          "use": "access_token"
+        }
+      },
+      "secret": "secret",
+      "legacyToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6ImluZGllYXV0aCtobWFjIn0.eyJjbGllbnRfaWQiOiJodHRwczovL2NsaWVudC5leGFtcGxlL2FwcCIsImV4cCI6NjEsImlhdCI6MSwibWUiOiJodHRwczovL2V4YW1wbGUub3JnLyIsInNjb3BlIjoiY3JlYXRlIHVwZGF0ZSIsInVzZSI6ImFjY2Vzc190b2tlbiJ9.CzN1dlkwfEbqXSdD8Vh9pFrC_J8ADj3PWvPavRSQq1s",
+      "canonicalToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6ImluZGllYXV0aCtobWFjIn0.eyJjbGllbnRfaWQiOiJodHRwczovL2NsaWVudC5leGFtcGxlL2FwcCIsImV4cCI6NjEsImlhdCI6MSwibWUiOiJodHRwczovL2V4YW1wbGUub3JnLyIsInNjb3BlIjoiY3JlYXRlIHVwZGF0ZSIsInVzZSI6ImFjY2Vzc190b2tlbiJ9.CzN1dlkwfEbqXSdD8Vh9pFrC_J8ADj3PWvPavRSQq1s",
+      "equal": true,
+      "legacyAcceptedByUnchangedVerifier": true
+    },
+    {
+      "name": "well-formed Unicode values and nested lower-case keys",
+      "params": {
+        "me": "https://example.org/",
+        "client_id": "https://client.example/app",
+        "scope": [
+          "create",
+          "update"
+        ],
+        "expiresIn": 60,
+        "now": 1000,
+        "extra": {
+          "use": "access_token",
+          "profile": {
+            "z": "café",
+            "a": "😀"
+          }
+        }
+      },
+      "secret": "secret",
+      "legacyToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6ImluZGllYXV0aCtobWFjIn0.eyJjbGllbnRfaWQiOiJodHRwczovL2NsaWVudC5leGFtcGxlL2FwcCIsImV4cCI6NjEsImlhdCI6MSwibWUiOiJodHRwczovL2V4YW1wbGUub3JnLyIsInByb2ZpbGUiOnsiYSI6IvCfmIAiLCJ6IjoiY2Fmw6kifSwic2NvcGUiOiJjcmVhdGUgdXBkYXRlIiwidXNlIjoiYWNjZXNzX3Rva2VuIn0.aI74mOBo4dIRFd2UgfrBiOXsIPgGVHFWY7cmoPz3pEU",
+      "canonicalToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6ImluZGllYXV0aCtobWFjIn0.eyJjbGllbnRfaWQiOiJodHRwczovL2NsaWVudC5leGFtcGxlL2FwcCIsImV4cCI6NjEsImlhdCI6MSwibWUiOiJodHRwczovL2V4YW1wbGUub3JnLyIsInByb2ZpbGUiOnsiYSI6IvCfmIAiLCJ6IjoiY2Fmw6kifSwic2NvcGUiOiJjcmVhdGUgdXBkYXRlIiwidXNlIjoiYWNjZXNzX3Rva2VuIn0.aI74mOBo4dIRFd2UgfrBiOXsIPgGVHFWY7cmoPz3pEU",
+      "equal": true,
+      "legacyAcceptedByUnchangedVerifier": true
+    },
+    {
+      "name": "mixed-case extra key ordering is an explicit migration",
+      "params": {
+        "me": "https://example.org/",
+        "client_id": "https://client.example/app",
+        "scope": [
+          "create",
+          "update"
+        ],
+        "expiresIn": 60,
+        "now": 1000,
+        "extra": {
+          "a": 1,
+          "Z": 2
+        }
+      },
+      "secret": "secret",
+      "legacyToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6ImluZGllYXV0aCtobWFjIn0.eyJhIjoxLCJjbGllbnRfaWQiOiJodHRwczovL2NsaWVudC5leGFtcGxlL2FwcCIsImV4cCI6NjEsImlhdCI6MSwibWUiOiJodHRwczovL2V4YW1wbGUub3JnLyIsInNjb3BlIjoiY3JlYXRlIHVwZGF0ZSIsIloiOjJ9.9SX19FWqpdCXTzKVGVWrgMiaq4SCs816V4i-sv-Q1JU",
+      "canonicalToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6ImluZGllYXV0aCtobWFjIn0.eyJaIjoyLCJhIjoxLCJjbGllbnRfaWQiOiJodHRwczovL2NsaWVudC5leGFtcGxlL2FwcCIsImV4cCI6NjEsImlhdCI6MSwibWUiOiJodHRwczovL2V4YW1wbGUub3JnLyIsInNjb3BlIjoiY3JlYXRlIHVwZGF0ZSJ9.TfpwYFbWuMKWp6LFl0ye7QV_XZCQnKfnZg8hAldX5B0",
+      "equal": false,
+      "legacyAcceptedByUnchangedVerifier": true
+    }
+  ]
+}

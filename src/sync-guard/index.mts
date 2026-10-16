@@ -1,5 +1,5 @@
 import type { IncomingHttpHeaders } from "node:http";
-import { readJsonBody, type App, type Context, type Repr, type RequestTrace } from "@red-cup-engineering/computing-with-http/app";
+import { readJsonBody, type App, type Context, type RequestTrace } from "@red-cup-engineering/computing-with-http/app";
 import { authAdmissionReport, type AuthAdmissionReport, type AuthEvidence } from "@red-cup-engineering/computer-web-server/edge/auth";
 import { bearerToken as bearerTokenValue } from "@red-cup-engineering/computing-with-http/codecs/http";
 import {
@@ -9,7 +9,7 @@ import {
   type RecognitionInput,
   type Assertion,
   type AssertionTrace,
-} from "@red-cup-engineering/animating/becoming/doing/working/governing/federating/assertion-worlds";
+} from "./wire.mjs";
 
 export type AuthDecision = {
   ok: boolean;
@@ -269,14 +269,15 @@ export function createRateLimiter(options: RateLimitOptions): (key: string) => R
   };
 }
 
-function repr(status: number, body: unknown, headers: Record<string, string> = {}): Repr {
-  return {
+function repr(status: number, body: unknown, headers: Record<string, string> = {}): Response {
+  return new Response(`${JSON.stringify(body, null, 2)}\n`, {
     status,
-    type: "application/json; charset=utf-8",
-    headers,
-    cacheControl: { noStore: true },
-    body: `${JSON.stringify(body, null, 2)}\n`,
-  };
+    headers: {
+      "content-type": "application/json; charset=utf-8",
+      "cache-control": "no-store",
+      ...headers,
+    },
+  });
 }
 
 function methodRequiresAuth(method: string, methods: readonly string[]): boolean {
@@ -353,3 +354,6 @@ export function syncGuardApp(options: SyncGuardAppOptions): App {
     ],
   };
 }
+
+export { assertAssertion, provenanceOf, recognizerFrom } from "./wire.mjs";
+export type { Assertion, AssertionTrace, Provenance, Recognizer, RecognitionInput } from "./wire.mjs";

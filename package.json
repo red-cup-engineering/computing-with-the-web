@@ -5,13 +5,13 @@
   "type": "module",
   "description": "Web computing library: the web tier topology, IndieWeb auth and posting, ActivityPub, syndication feeds, pagination, theming, and web-domain app surfaces built on the HTTP primitives and HTTP server.",
   "engines": {
-    "node": ">=22.18"
+    "node": ">=24.2.0"
   },
   "scripts": {
     "clean": "rm -rf dist .tmp/test-dist",
     "check": "tsc --noEmit",
     "build": "tsc -p tsconfig.build.json",
-    "test": "npm run build && tsc -p tsconfig.test.json && node --test .tmp/test-dist/webmention/index.test.mjs .tmp/test-dist/triple-pattern-fragments/index.test.mjs .tmp/test-dist/theming-computer/index.test.mjs .tmp/test-dist/theming/index.test.mjs .tmp/test-dist/taxonomy/index.test.mjs .tmp/test-dist/taxonomy/receiving.test.mjs src/taxonomy/index.http.test.mjs test/swarm-taxonomy.test.mjs",
+    "test": "npm run build && tsc -p tsconfig.test.json && node --test .tmp/test-dist/webmention/index.test.mjs .tmp/test-dist/triple-pattern-fragments/index.test.mjs .tmp/test-dist/theming-computer/index.test.mjs .tmp/test-dist/theming/index.test.mjs .tmp/test-dist/taxonomy/index.test.mjs .tmp/test-dist/taxonomy/receiving.test.mjs src/taxonomy/index.http.test.mjs test/swarm-taxonomy.test.mjs .tmp/test-dist/evidence.test.mjs .tmp/test-dist/sync-guard/wire.test.mjs .tmp/test-dist/sync-guard/index.test.mjs .tmp/test-dist/topology/traversal.test.mjs .tmp/test-dist/pagination/history.test.mjs .tmp/test-dist/theming/admission.test.mjs test/indieauth-token.test.mjs test/evidence-boundary.test.mjs test/sync-guard.http.test.mjs",
     "prepack": "npm run rebuild",
     "rebuild": "npm run clean && npm run build"
   },
@@ -101,16 +101,16 @@
     }
   },
   "dependencies": {
-    "@red-cup-engineering/animating": "workspace:*",
     "@red-cup-engineering/computer-serialized-content-engineering-services-section": "workspace:*",
     "@red-cup-engineering/computer-web-server": "workspace:*",
     "@red-cup-engineering/http-server-core-service": "workspace:*",
     "@red-cup-engineering/html-file-codec-service": "workspace:*",
-    "@red-cup-engineering/relating": "workspace:*",
     "@red-cup-engineering/computing-with-http": "workspace:*",
     "@red-cup-engineering/uri-services-section": "workspace:*",
     "@red-cup-engineering/computer-triplet-serialized-content-engineering-services-section": "0.1.0",
-    "@red-cup-engineering/computer-data-engineering-services-section": "0.2.0"
+    "@red-cup-engineering/computer-data-engineering-services-section": "0.2.0",
+    "@red-cup-engineering/json-services-section": "0.4.0",
+    "@red-cup-engineering/signcell": "0.4.2"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
