@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { createRequire } from "node:module";
 import {
   archiveHtml, archivePage, buildTaxonomy, members, membersWithContested,
-  related, relatedItems, taxonomyIndex, termsOf, termsByPredicate,
+  related, relatedItems, taxonomyApp, taxonomyIndex, termsOf, termsByPredicate,
   type FiniteAlgebra, type TaxonomyCellValue, type TaxonomyItem,
 } from "./index.mjs";
 import { joinKnowledgeReadings } from "./four.mjs";
@@ -120,3 +120,47 @@ test("shared HTML codec escapes text, attributes, URLs and dates", () => {
   assert.match(html, /x=&lt;tag&gt;&amp;a=&quot;b&quot;/);
 });
 
+test("canonical URI admission preserves well-formed HTTP(S) and refuses legacy surrogate normalization", () => {
+  const item: TaxonomyItem = {
+    id: "uri", title: "URI admission", url: "https://example.org/item", terms: { tag: ["Web"] },
+  };
+  const index = taxonomyIndex([item]);
+  for (const url of [
+    "http://example.org/item",
+    "https://example.org/caf\u00e9",
+    "https://example.org/\u{1F680}",
+  ]) {
+    assert.equal(url.isWellFormed(), true);
+    const admitted = { ...item, url };
+    assert.equal(taxonomyIndex([admitted]).terms[0]?.items[0]?.url, url);
+    assert.doesNotThrow(() => relatedItems(admitted, [item]));
+    assert.doesNotThrow(() => relatedItems(item, [admitted]));
+    assert.doesNotThrow(() => taxonomyApp({ items: [admitted], baseUrl: url }));
+    assert.ok(archivePage(index, "tag", "Web", { baseUrl: url }));
+  }
+
+  for (const surrogate of ["\uD800", "\uDC00"]) {
+    const malformed = "https://example.org/" + surrogate;
+    assert.equal(malformed.isWellFormed(), false);
+    // The old validator checked only new URL(...).protocol. It accepted this
+    // after the URL parser replaced the lone surrogate; the URI owner refuses it.
+    const legacyParsed = new URL(malformed);
+    assert.equal(legacyParsed.protocol, "https:");
+    assert.equal(legacyParsed.pathname, "/%EF%BF%BD");
+    const refused = { ...item, url: malformed };
+    const itemError = {
+      name: "TypeError",
+      message: "item.url must be a well-formed Unicode absolute http(s) URL",
+    };
+    const baseError = {
+      name: "TypeError",
+      message: "baseUrl must be a well-formed Unicode absolute http(s) URL",
+    };
+    assert.throws(() => taxonomyIndex([refused]), itemError);
+    assert.throws(() => relatedItems(refused, [item]), itemError);
+    assert.throws(() => relatedItems(item, [refused]), itemError);
+    assert.throws(() => taxonomyApp({ items: [refused], baseUrl: item.url }), itemError);
+    assert.throws(() => taxonomyApp({ items: [item], baseUrl: malformed }), baseError);
+    assert.throws(() => archivePage(index, "tag", "Web", { baseUrl: malformed }), baseError);
+  }
+});
