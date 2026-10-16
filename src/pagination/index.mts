@@ -1,3 +1,5 @@
+import { normaliseSize, pageCount } from "./count.mjs";
+export { normaliseSize, pageCount } from "./count.mjs";
 import type { App, Repr } from "@red-cup-engineering/computing-with-http/app";
 import { mark, type ChargeValueName, type UtteranceCarrier } from "@red-cup-engineering/relating";
 import { joinKnowledgeNames } from "@red-cup-engineering/animating/becoming/doing/algebra";
@@ -114,17 +116,6 @@ function positiveInteger(value: number, field: string): void {
 
 function headerQuoted(value: unknown): string {
   return String(value ?? "").replace(/\\/g, "\\\\").replace(/"/g, '\\"');
-}
-
-export function normaliseSize(size: number): number {
-  positiveInteger(size, "size");
-  return size;
-}
-
-export function pageCount(total: number, size: number): number {
-  normaliseSize(size);
-  if (!Number.isSafeInteger(total) || total < 0) throw new RangeError("total must be a non-negative integer");
-  return total === 0 ? 1 : Math.ceil(total / size);
 }
 
 export function feedPageUrl(base: string, index: number, options: FeedPageUrlOptions = {}): string {

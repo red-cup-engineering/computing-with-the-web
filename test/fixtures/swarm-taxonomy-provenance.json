@@ -1,0 +1,45 @@
+{
+  "repository": "emsenn/swarm",
+  "commit": "72847d0a5a0e3303a0ec417e793daabb0634fa8d",
+  "purpose": "Actual pure consumer projection functions; no consumer HTTP adapter or live migration",
+  "inputs": [
+    {
+      "file": "src/taxonomy.mts",
+      "gitBlob": "0a1ae231b3cf419eee5b9959ccfadaf025ec8797",
+      "functions": [
+        "taxonomyItemFromTraceEntry",
+        "taxonomyAlgebraFromTraceEntry",
+        "termsFromTraceEntry",
+        "termPairsFromTraceEntry",
+        "relationDocument",
+        "traceEntryItemId",
+        "chargeLabel",
+        "displayPredicate",
+        "objectOf",
+        "displayTerm",
+        "instantOf",
+        "instantCandidate",
+        "subjectFamily",
+        "absolute",
+        "ensureBaseUrl"
+      ]
+    },
+    {
+      "file": "src/canonical.mts",
+      "gitBlob": "3a7afeee0fdcf53285d61b2b30c0f9206b34fb37",
+      "functions": [
+        "stableKey",
+        "canonicalId",
+        "canonicalAny"
+      ]
+    },
+    {
+      "file": "src/trace.mts",
+      "gitBlob": "d6758b68ffbc008ffe91cc99686b2f672f8b2946",
+      "functions": [
+        "traceEntryId",
+        "traceEntryDigest"
+      ]
+    }
+  ]
+}
