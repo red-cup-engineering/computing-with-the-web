@@ -25,8 +25,7 @@ export type WebEvidence = Readonly<{
 }>;
 
 const require = createRequire(import.meta.url);
-function supplier(module: string, name: string): (...args: unknown[]) => unknown {
-  const loaded: unknown = require(module);
+function supplier(module: string, loaded: unknown, name: string): (...args: unknown[]) => unknown {
   if (!record(loaded) || typeof loaded[name] !== "function") {
     throw new TypeError(module + " must export " + name);
   }
@@ -40,12 +39,12 @@ function exactKeys(value: Record<string, unknown>, required: readonly string[], 
   return required.every((key) => Object.hasOwn(value, key))
     && Object.keys(value).every((key) => required.includes(key) || optional.includes(key));
 }
-const ownerMark = supplier("@red-cup-engineering/signcell/mark", "mark");
-const ownerIsMark = supplier("@red-cup-engineering/signcell/mark", "isMark");
-const ownerUtterEvidence = supplier("@red-cup-engineering/signcell/utterance", "utterEvidence");
-const ownerIsUtterance = supplier("@red-cup-engineering/signcell/utterance", "isUtterance");
-const ownerCell = supplier("@red-cup-engineering/signcell/cell", "cell");
-const ownerIsCell = supplier("@red-cup-engineering/signcell/cell", "isCell");
+const ownerMark = supplier("@red-cup-engineering/signcell/mark", require("@red-cup-engineering/signcell/mark"), "mark");
+const ownerIsMark = supplier("@red-cup-engineering/signcell/mark", require("@red-cup-engineering/signcell/mark"), "isMark");
+const ownerUtterEvidence = supplier("@red-cup-engineering/signcell/utterance", require("@red-cup-engineering/signcell/utterance"), "utterEvidence");
+const ownerIsUtterance = supplier("@red-cup-engineering/signcell/utterance", require("@red-cup-engineering/signcell/utterance"), "isUtterance");
+const ownerCell = supplier("@red-cup-engineering/signcell/cell", require("@red-cup-engineering/signcell/cell"), "cell");
+const ownerIsCell = supplier("@red-cup-engineering/signcell/cell", require("@red-cup-engineering/signcell/cell"), "isCell");
 
 function isMark(value: unknown): value is Mark {
   return record(value) && exactKeys(value, ["kind", "value"])
