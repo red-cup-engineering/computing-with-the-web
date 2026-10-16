@@ -1,7 +1,7 @@
 import { jsonRepr, readFormBody, readJsonBody, readMultipartBody, type App, type Repr } from "@red-cup-engineering/computing-with-http/app";
 import type { MultipartPart } from "@red-cup-engineering/computing-with-http/codecs/multipart";
 import { parseContentType } from "@red-cup-engineering/computing-with-http/codecs/http";
-import type { Assertion, AssertionTrace } from "@red-cup-engineering/animating/becoming/doing/working/governing/federating/assertion-worlds";
+import type { Assertion, AssertionTrace } from "../sync-guard/wire.mjs";
 import {
   authorizeBearer,
   bearerToken,

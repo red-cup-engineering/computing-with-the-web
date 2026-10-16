@@ -13,7 +13,7 @@ import {
   type SseSink,
   type TopicEvent,
 } from "@red-cup-engineering/computing-with-http/app";
-import { getSignedCookie } from "@red-cup-engineering/http-server-core-service/cookies";
+import { getSignedCookie } from "./cookies.mjs";
 
 export type SessionLogin = Readonly<{
   name: string;

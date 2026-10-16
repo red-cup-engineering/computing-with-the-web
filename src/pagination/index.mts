@@ -1,9 +1,8 @@
 import { normaliseSize, pageCount } from "./count.mjs";
 export { normaliseSize, pageCount } from "./count.mjs";
 import type { App, Repr } from "@red-cup-engineering/computing-with-http/app";
-import { mark, type ChargeValueName, type UtteranceCarrier } from "@red-cup-engineering/relating";
-import { joinKnowledgeNames } from "@red-cup-engineering/animating/becoming/doing/algebra";
-import { utterEvidence } from "@red-cup-engineering/animating/becoming/doing/working/learning/lessons";
+import { mark, webEvidence, type Utterance, type WebEvidence } from "../evidence.mjs";
+import { joinKnowledgeReadings, type KnowledgeReading } from "../taxonomy/four.mjs";
 import { linkHeader } from "@red-cup-engineering/computing-with-http/codecs/http";
 import { assertHttpUrl } from "@red-cup-engineering/uri-services-section/http-url";
 import { escapeHtmlText } from "../feed/index.mjs";
@@ -75,10 +74,13 @@ export type FeedHistoryClaim = {
   predicate: `feed-history:${FeedHistoryClaimKind}` | `feed-history:not-${FeedHistoryClaimKind}`;
   object: FeedHistoryClaimKind;
   /** The single utterance the claim articulates — the only admissible evidence. */
-  utterance: UtteranceCarrier;
+  utterance: Utterance;
+  /** Supplied witness is retained on this Web record, outside carrier identity. */
+  witness: unknown;
+  evidence: WebEvidence;
   /** Charge value carried as judgment DATA at this layer: joined exactly with
    *  the knowledge join, never re-admitted into bedrock. */
-  value: ChargeValueName;
+  value: KnowledgeReading;
 };
 
 export type PaginationOptions = {
@@ -285,17 +287,20 @@ export function feedHistoryClaim<T>(
   const predicate = asserted
     ? (`feed-history:${claim}` as const)
     : (`feed-history:not-${claim}` as const);
+  const evidence = webEvidence(mark(subject), mark(predicate), mark(claim), witness);
   return {
     subject,
     predicate,
     object: claim,
-    utterance: utterEvidence({ subject: mark(subject), predicate: mark(predicate), object: mark(claim), provenance: witness }),
+    witness,
+    evidence,
+    utterance: evidence.utterance,
     value: asserted ? "potential" : "active",
   };
 }
 
-export function foldFeedHistoryClaims(claims: readonly FeedHistoryClaim[]): ChargeValueName {
-  return joinKnowledgeNames(claims.map((claim) => claim.value));
+export function foldFeedHistoryClaims(claims: readonly FeedHistoryClaim[]): KnowledgeReading {
+  return claims.reduce<KnowledgeReading>((value, claim) => joinKnowledgeReadings(value, claim.value), "absurd");
 }
 
 export function archiveMarker(prefix = FH_PREFIX): string {

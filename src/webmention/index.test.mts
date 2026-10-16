@@ -42,8 +42,8 @@ type Route = {
 type FetchLog = {
   url: string;
   method: string;
-  body?: BodyInit | null;
-  headers?: HeadersInit;
+  body?: NonNullable<Parameters<FetchLike>[1]>["body"];
+  headers?: NonNullable<Parameters<FetchLike>[1]>["headers"];
 };
 
 function fakeFetch(routes: Record<string, Route>, log: FetchLog[] = []): FetchLike {

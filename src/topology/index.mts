@@ -8,11 +8,8 @@
 // are role-constrained, every node a composite factors through bears
 // both roles: proxies are exactly the peers, by theorem.
 //
-// Traversal is where structure becomes lesson evidence. A wire event over an
-// exchange yields evidence whose cell mirrors the morphism;
-// @red-cup-engineering/animating/becoming/doing/working/learning/lessons owns everything from there (utterance
-// articulation, accretive memory, world induction on explicit reads —
-// charges are measured from induced worlds, never seeded here).
+// Traversal yields Web evidence with genuine SignCell carriers; caller testimony
+// stays outside carrier identity. This library does not induce worlds or memory.
 //
 // The answering vocabulary states what a server-role node answers:
 // messages (RFC 9110 senses — pure values, no streams, no sockets) and
@@ -30,7 +27,7 @@ export { identityRelay, relayOf, composeRelays, intermediates } from "./relay.mj
 export type { Relay } from "./relay.mjs";
 
 export { traverseExchange, traverseRelay } from "./traversal.mjs";
-export type { TraversalTestimony } from "./traversal.mjs";
+export type { TraversalTestimony, TraversalEvidence } from "./traversal.mjs";
 
 export { requestMessage, responseMessage } from "./message.mjs";
 export type { FieldValue, Fields, RequestMessage, ResponseMessage } from "./message.mjs";

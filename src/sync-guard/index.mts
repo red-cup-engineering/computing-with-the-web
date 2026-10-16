@@ -9,7 +9,7 @@ import {
   type RecognitionInput,
   type Assertion,
   type AssertionTrace,
-} from "@red-cup-engineering/animating/becoming/doing/working/governing/federating/assertion-worlds";
+} from "./wire.mjs";
 
 export type AuthDecision = {
   ok: boolean;
@@ -353,3 +353,6 @@ export function syncGuardApp(options: SyncGuardAppOptions): App {
     ],
   };
 }
+
+export { assertAssertion, provenanceOf, recognizerFrom } from "./wire.mjs";
+export type { Assertion, AssertionTrace, Provenance, Recognizer, RecognitionInput } from "./wire.mjs";
