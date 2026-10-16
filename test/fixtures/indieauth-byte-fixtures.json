@@ -1,5 +1,5 @@
 {
-  "observedAt": "2026-10-16T10:42:08.488Z",
+  "observedAt": "2026-10-16T11:03:07.440Z",
   "historicalSource": {
     "url": "https://github.com/emsenn/web-indieauth/blob/c3d61b29e0688edab71c88b83f2308399e2b74b3/src/index.mts",
     "blob": "3d79706d711464f59e97233f10b567251ec0a8b0"
@@ -76,6 +76,28 @@
       "secret": "secret",
       "legacyToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6ImluZGllYXV0aCtobWFjIn0.eyJhIjoxLCJjbGllbnRfaWQiOiJodHRwczovL2NsaWVudC5leGFtcGxlL2FwcCIsImV4cCI6NjEsImlhdCI6MSwibWUiOiJodHRwczovL2V4YW1wbGUub3JnLyIsInNjb3BlIjoiY3JlYXRlIHVwZGF0ZSIsIloiOjJ9.9SX19FWqpdCXTzKVGVWrgMiaq4SCs816V4i-sv-Q1JU",
       "canonicalToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6ImluZGllYXV0aCtobWFjIn0.eyJaIjoyLCJhIjoxLCJjbGllbnRfaWQiOiJodHRwczovL2NsaWVudC5leGFtcGxlL2FwcCIsImV4cCI6NjEsImlhdCI6MSwibWUiOiJodHRwczovL2V4YW1wbGUub3JnLyIsInNjb3BlIjoiY3JlYXRlIHVwZGF0ZSJ9.TfpwYFbWuMKWp6LFl0ye7QV_XZCQnKfnZg8hAldX5B0",
+      "equal": false,
+      "legacyAcceptedByUnchangedVerifier": true
+    },
+    {
+      "name": "Unicode extra key ordering is an explicit migration",
+      "params": {
+        "me": "https://example.org/",
+        "client_id": "https://client.example/app",
+        "scope": [
+          "create",
+          "update"
+        ],
+        "expiresIn": 60,
+        "now": 1000,
+        "extra": {
+          "z": 1,
+          "ä": 2
+        }
+      },
+      "secret": "secret",
+      "legacyToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6ImluZGllYXV0aCtobWFjIn0.eyLDpCI6MiwiY2xpZW50X2lkIjoiaHR0cHM6Ly9jbGllbnQuZXhhbXBsZS9hcHAiLCJleHAiOjYxLCJpYXQiOjEsIm1lIjoiaHR0cHM6Ly9leGFtcGxlLm9yZy8iLCJzY29wZSI6ImNyZWF0ZSB1cGRhdGUiLCJ6IjoxfQ.kHXbMMn6wctDCRUEnxBygFCJhHcYcNbylkHCwGAabsw",
+      "canonicalToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6ImluZGllYXV0aCtobWFjIn0.eyJjbGllbnRfaWQiOiJodHRwczovL2NsaWVudC5leGFtcGxlL2FwcCIsImV4cCI6NjEsImlhdCI6MSwibWUiOiJodHRwczovL2V4YW1wbGUub3JnLyIsInNjb3BlIjoiY3JlYXRlIHVwZGF0ZSIsInoiOjEsIsOkIjoyfQ.2FywxSFhX7IgFNlbH5dm4ZCoMDQdCuW92HvsCX2oUv8",
       "equal": false,
       "legacyAcceptedByUnchangedVerifier": true
     }

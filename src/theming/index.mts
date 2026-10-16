@@ -1,6 +1,6 @@
 import { mark, webEvidence, type WebEvidence, type Utterance } from "../evidence.mjs";
 import { joinKnowledgeReadings, type KnowledgeReading } from "../taxonomy/four.mjs";
-import { attrs, el, escapeHtml as escapeHtmlText } from "@red-cup-engineering/html-file-codec-service/string-rendering";
+import { attrs, el, escapeHtml as escapeHtmlText } from "../html.mjs";
 import {
   themePalette,
   tokenVar,

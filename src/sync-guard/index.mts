@@ -1,5 +1,5 @@
 import type { IncomingHttpHeaders } from "node:http";
-import { readJsonBody, type App, type Context, type RequestTrace } from "@red-cup-engineering/computing-with-http/app";
+import { readJsonBody, type App, type Context, type Repr, type RequestTrace } from "@red-cup-engineering/computing-with-http/app";
 import { authAdmissionReport, type AuthAdmissionReport, type AuthEvidence } from "@red-cup-engineering/computer-web-server/edge/auth";
 import { bearerToken as bearerTokenValue } from "@red-cup-engineering/computing-with-http/codecs/http";
 import {
@@ -269,15 +269,14 @@ export function createRateLimiter(options: RateLimitOptions): (key: string) => R
   };
 }
 
-function repr(status: number, body: unknown, headers: Record<string, string> = {}): Response {
-  return new Response(`${JSON.stringify(body, null, 2)}\n`, {
+function repr(status: number, body: unknown, headers: Record<string, string> = {}): Repr {
+  return {
     status,
-    headers: {
-      "content-type": "application/json; charset=utf-8",
-      "cache-control": "no-store",
-      ...headers,
-    },
-  });
+    type: "application/json; charset=utf-8",
+    headers,
+    cacheControl: { noStore: true },
+    body: `${JSON.stringify(body, null, 2)}\n`,
+  };
 }
 
 function methodRequiresAuth(method: string, methods: readonly string[]): boolean {

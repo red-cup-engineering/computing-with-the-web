@@ -3,7 +3,7 @@
 import { htmlRepr, jsonRepr, textRepr, type App, type Repr, type Resource } from "@red-cup-engineering/computing-with-http/app";
 import { cacheControl as serializeCacheControl } from "@red-cup-engineering/computing-with-http/codecs/http";
 import { assertHttpUrl as assertAbsoluteUrl } from "@red-cup-engineering/uri-services-section/http-url";
-import { escapeHtml } from "@red-cup-engineering/html-file-codec-service/string-rendering";
+import { escapeHtml } from "../html.mjs";
 import { pageCount } from "../pagination/count.mjs";
 import { joinKnowledgeReadings, type KnowledgeReading } from "./four.mjs";
 
