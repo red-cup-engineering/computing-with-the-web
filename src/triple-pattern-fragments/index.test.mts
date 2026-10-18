@@ -69,3 +69,17 @@ test("web resource mounts TPF at one negotiated HTTP endpoint", () => {
   assert.deepEqual(resource.methods, ["GET"]);
   assert.deepEqual(resource.produces, ["application/ld+json", "application/json", "text/turtle"]);
 });
+
+test("configured maximum bounds implicit and explicit page sizes and refuses invalid maxima", () => {
+  for (const limit of [undefined, 0, -1, NaN, Infinity, 1000]) {
+    const page = queryTriples(folds, {}, { ...(limit === undefined ? {} : { limit }), maxLimit: 2 });
+    assert.equal(page.limit, 2);
+    assert.equal(page.triples.length, 2);
+    assert.equal(page.totalPages, 2);
+    assert.match(page.links.next!, /limit=2/);
+  }
+  assert.equal(queryTriples(folds, {}, { limit: 1, maxLimit: 2 }).limit, 1);
+  for (const maxLimit of [0, -1, NaN, Infinity, 1.5, Number.MAX_SAFE_INTEGER + 1]) {
+    assert.throws(() => queryTriples(folds, {}, { maxLimit }), /maxLimit must be a positive safe integer/);
+  }
+});
