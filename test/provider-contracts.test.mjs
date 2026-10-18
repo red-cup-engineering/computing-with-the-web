@@ -5,6 +5,7 @@ import { Socket } from "node:net";
 import { attrs, el, escapeHtml } from "../dist/html.mjs";
 import { decodeTheme, render, minimal, atelier, themePalette } from "../dist/theming/index.mjs";
 import { themePalette as canonicalPalette } from "@red-cup-engineering/web-theming-service/theming-computer";
+import * as canonicalTheming from "@red-cup-engineering/web-theming-service/theming";
 import { nativeHttpHandler } from "@red-cup-engineering/computer-web-server/native-application";
 import { getSignedCookie } from "../dist/session-carrier/cookies.mjs";
 import { signCookieValue, unsignCookieValue, serializeCookieHeader } from "@red-cup-engineering/computing-with-http/codecs/cookie";
@@ -48,8 +49,11 @@ test("canonical HTTP reads existing signed cookies without changing bytes or ref
 });
 
 
-test("canonical Data palettes reach native HTTP, preserving the article and refusing malformed seeds", async () => {
+test("canonical Data themes reach native HTTP, preserving articles, omitting empty navigation and refusing lossy rendering", async () => {
   assert.equal(themePalette, canonicalPalette);
+  for (const [name, value] of Object.entries({ decodeTheme, render, minimal, atelier })) {
+    assert.equal(value, canonicalTheming[name], `${name} must come from its Data owner`);
+  }
   const article = "<article><p>Received shared palette &amp; unchanged body.</p></article>";
   let completed = 0;
   const server = createServer(nativeHttpHandler({ resources: [{
@@ -59,6 +63,15 @@ test("canonical Data palettes reach native HTTP, preserving the article and refu
       }, type: { sans: "system-ui" } });
       const body = render(theme, article, { title: "Shared CSS registry" });
       completed++;
+      return { type: "text/html; charset=utf-8", body };
+    },
+  }, {
+    match: "/theme-shell", methods: ["GET"], handler(ctx) {
+      const theme = ctx.url.searchParams.get("theme") === "atelier" ? atelier : minimal;
+      const nav = [null, {}, { href: 42, label: "invalid" }];
+      if (ctx.url.searchParams.get("nav") === "mixed") nav.push({ href: "/a?x=1&y=2", label: "A&B", current: true });
+      const selected = ctx.url.searchParams.has("lossy") ? { ...theme, wrap: () => "<p>dropped</p>" } : theme;
+      const body = render(selected, article, { title: "Shared <shell>", nav });
       return { type: "text/html; charset=utf-8", body };
     },
   }] }));
@@ -77,6 +90,20 @@ test("canonical Data palettes reach native HTTP, preserving the article and refu
       assert.ok(body.includes(`--accent: ${accent}`));
       assert.match(body, /@media \(prefers-color-scheme: dark\)/);
     }
+    for (const theme of ["minimal", "atelier"]) {
+      for (const nav of ["empty", "mixed"]) {
+        const reply = await fetch(`${origin}/theme-shell?theme=${theme}&nav=${nav}`);
+        assert.equal(reply.status, 200);
+        const body = await reply.text();
+        assert.ok(body.includes(article));
+        assert.ok(body.includes("<title>Shared &lt;shell&gt;</title>"));
+        if (nav === "empty") assert.doesNotMatch(body, /<nav\b/);
+        else assert.ok(body.includes('<a href="/a?x=1&amp;y=2" aria-current="page">A&amp;B</a>'));
+      }
+    }
+    const lossy = await fetch(`${origin}/theme-shell?lossy`);
+    assert.equal(lossy.status, 500);
+    await lossy.text();
     const refused = await fetch(`${origin}/theme?accent=%231g0000`);
     assert.equal(refused.status, 500);
     await refused.text();

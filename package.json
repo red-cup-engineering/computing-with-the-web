@@ -103,7 +103,7 @@
     "@red-cup-engineering/signcell": "0.4.2",
     "@red-cup-engineering/http-services-section": "0.6.2",
     "@red-cup-engineering/html-structural-projection-service": "0.3.3",
-    "@red-cup-engineering/web-theming-service": "0.0.8"
+    "@red-cup-engineering/web-theming-service": "0.0.9"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
