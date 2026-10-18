@@ -124,14 +124,7 @@ const DEFAULT_TAXONOMY_PREDICATES = Object.freeze(["category", "tag", "author", 
 const RELATION_SEPARATOR = "\u0001";
 
 function relationTermKey(predicate: string, object: string): string {
-  return `${predicate}${RELATION_SEPARATOR}${object}`;
-}
-
-function splitRelationTermKey(key: string): TaxonomyRelationTerm {
-  const index = key.indexOf(RELATION_SEPARATOR);
-  return index === -1
-    ? { predicate: key, object: "" }
-    : { predicate: key.slice(0, index), object: key.slice(index + 1) };
+  return JSON.stringify([predicate, object]);
 }
 
 function normalizeRelationTerm(term: TaxonomyRelationTerm): TaxonomyRelationTerm {
@@ -206,7 +199,7 @@ export function buildTaxonomy(
 
   for (const algebra of algebras) {
     if (!algebra.subject) throw new TypeError("finite algebra subject is required");
-    subjects.push(algebra.subject);
+    if (!subjectFibers.has(algebra.subject)) subjects.push(algebra.subject);
     subjectFibers.set(algebra.subject, subjectFibers.get(algebra.subject) ?? new Map());
     for (const cell of algebra.potential ?? []) put(algebra.subject, cell, "potential");
     for (const cell of algebra.active ?? []) put(algebra.subject, cell, "active");
@@ -214,7 +207,9 @@ export function buildTaxonomy(
   }
 
   const relationTerms = [...termMeta.entries()]
-    .sort(([a], [b]) => a.localeCompare(b))
+    // Keep the established display order separate from collision-free identity.
+    .sort(([, a], [, b]) => `${a.predicate}${RELATION_SEPARATOR}${a.object}`
+      .localeCompare(`${b.predicate}${RELATION_SEPARATOR}${b.object}`))
     .map(([, term]) => term);
 
   return Object.freeze({

@@ -164,3 +164,43 @@ test("canonical URI admission preserves well-formed HTTP(S) and refuses legacy s
     assert.throws(() => archivePage(index, "tag", "Web", { baseUrl: malformed }), baseError);
   }
 });
+
+
+test("repeated subject records merge all readings while membership views contain each subject once", () => {
+  const relation = buildTaxonomy([
+    { subject: "b", potential: [term] },
+    { subject: "a", potential: [term] },
+    { subject: "b", active: [term] },
+    { subject: "c", potential: [term] },
+    { subject: "a", potential: [term] },
+    { subject: "n" },
+  ]);
+  assert.deepEqual(relation.subjects, ["b", "a", "c", "n"]);
+  assert.equal(relation.at("b", term), "stable");
+  assert.equal(relation.at("n", term), "absurd");
+  assert.deepEqual(members(relation, term), ["a", "c"]);
+  assert.deepEqual(membersWithContested(relation, term), [
+    { subject: "b", contested: true }, { subject: "a", contested: false }, { subject: "c", contested: false },
+  ]);
+  assert.deepEqual(related(relation, "c"), [{ subject: "a", shared: 1 }]);
+  assert.throws(() => buildTaxonomy([{ subject: "" }]), /subject is required/);
+});
+
+test("distinct predicate/object tuples do not merge into false contradiction or related membership", () => {
+  const positive = { predicate: "tag\u0001tail", object: "Web" };
+  const negative = { predicate: "tag", object: "tail\u0001Web" };
+  const relation = buildTaxonomy([
+    { subject: "z", potential: [positive], active: [negative] },
+    { subject: "a", potential: [positive] },
+    { subject: "c", potential: [negative] },
+  ], { predicates: [positive.predicate, negative.predicate] });
+  assert.equal(relation.terms.length, 2);
+  assert.equal(relation.at("z", positive), "potential");
+  assert.equal(relation.at("z", negative), "active");
+  assert.equal(relation.at("z", { predicate: "missing", object: "Web" }), "absurd");
+  assert.deepEqual(termsOf(relation, "z"), [positive]);
+  assert.deepEqual(members(relation, positive), ["z", "a"]);
+  assert.deepEqual(members(relation, negative), ["c"]);
+  assert.deepEqual(related(relation, "z"), [{ subject: "a", shared: 1 }]);
+  assert.deepEqual([...termsByPredicate(relation).keys()].sort(), [negative.predicate, positive.predicate].sort());
+});

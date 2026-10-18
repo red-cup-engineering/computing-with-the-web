@@ -46,6 +46,11 @@ test("pinned SWARM pure projections preserve positive, negative, both and neithe
   // This is the actual pure document function behind the old relation.json route.
   const document = JSON.parse(JSON.stringify(relationDocument(relation)));
   assert.equal(document.cells.length, 4);
+  const repeated = buildTaxonomy([...entries, entries[0]].map(taxonomyAlgebraFromTraceEntry), {
+    predicates: ["charge", "subject", "predicate", "object", "field", "mark", "family", "witness"],
+  });
+  assert.deepEqual(JSON.parse(JSON.stringify(relationDocument(repeated))), document,
+    "repeating source testimony must not duplicate serialized subject rows");
   assert.ok(document.cells.every(cell => cell.terms.every(term => term.value !== "absurd")));
   assert.ok(document.cells[1].terms.some(term => term.predicate === "predicate" && term.object === "blocked" && term.value === "active"));
   assert.ok(document.cells[2].terms.some(term => term.predicate === "predicate" && term.object === "claim" && term.value === "stable"));
