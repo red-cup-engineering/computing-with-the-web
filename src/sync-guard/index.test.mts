@@ -39,7 +39,7 @@ test("authorizeBearerReport exposes MEMETICS admission evidence while preserving
   assert.equal(trace.kind, "web-server.request-trace");
   assert.equal(trace.id, "req-sync-auth");
   assert.deepEqual(trace.entries.map((entry) => [entry.e, entry.a, entry.v, entry.t]), [
-    ["req-sync-auth", "header.authorization", "Bearer secret", "1"],
+    ["req-sync-auth", "header.authorization", "[redacted]", "1"],
   ]);
 
   const open = authorizeBearerReport({}, undefined);
@@ -57,7 +57,7 @@ test("authorizeBearerReport exposes MEMETICS admission evidence while preserving
   assert.equal(accepted.source, "peer-a");
   assert.equal(accepted.report.trace.id, "req-sync-auth");
   assert.equal(accepted.report.value, "potential");
-  assert.deepEqual(accepted.report.claims, { token: "secret", source: "peer-a" });
+  assert.deepEqual(accepted.report.claims, { source: "peer-a" });
   // The current HTTP owner carries the same judgment in utterances, not legacy datoms.
   const utterances = accepted.report.settled.utterances;
   const record = (value: unknown): value is Record<string, unknown> => typeof value === "object" && value !== null;
@@ -138,3 +138,41 @@ test("sync validator preserves permissive shape, bounds, source precedence and c
   assert.equal(mixed.faults[0]?.index,1);
 });
 
+
+test("authentication diagnostics redact credentials while explicit decisions retain them", () => {
+  const headers = { authorization: "Bearer private-bearer", cookie: "session=private-cookie",
+    "x-api-key": "private-api", referer: "https://user:private-user@peer.example/?token=private-query" };
+  const trace = syncAuthTrace(headers, { id: "auth-test", now: "clock" });
+  for (const policy of [{ "private-bearer": "peer-a" }, ["private-bearer"],
+    new Set(["private-bearer"]), () => true] as const) {
+    const value = authorizeBearerReport(headers, policy, { ...trace, entries: [
+      ...trace.entries, { e: trace.id, a: "url", v: "/sync?token=private-url", t: "clock" },
+      { e: trace.id, a: "header.authorization", v: "Bearer private-bearer", t: "clock" },
+      { e: trace.id, a: "header.Authorization", v: "Bearer private-bearer", t: "other-clock" }] });
+    assert.equal(value.token, "private-bearer");
+    assert.equal(value.source, Array.isArray(policy) || policy instanceof Set || typeof policy === "function"
+      ? "private-bearer" : "peer-a");
+    const diagnostics = JSON.stringify(value.report);
+    for (const secret of ["private-bearer", "private-cookie", "private-api", "private-user", "private-query", "private-url"])
+      assert.equal(diagnostics.includes(secret), false, secret);
+    assert.equal(value.report.trace.entries.length, trace.entries.length + 3);
+    assert.equal(value.report.trace.entries.at(-1)?.a, "header.Authorization");
+    assert.equal(value.report.trace.entries.at(-1)?.t, "other-clock");
+    assert.equal(value.report.value, "potential");
+  }
+});
+
+test("sync validation refuses unsafe caps and unserializable rows without losing partial results", () => {
+  for (const name of ["maxAssertions", "maxAssertionBytes", "maxFieldLength"] as const)
+    for (const value of [-1, NaN, Infinity, .5, Number.MAX_SAFE_INTEGER + 1])
+      assert.throws(() => validateSyncAssertions(assertions, { [name]: value }), RangeError);
+  assert.equal(validateSyncAssertions([], { maxAssertions: 0 }).ok, true);
+  const cycle: Record<string, unknown> = { e: "x", a: "p", source: "peer-a" };
+  cycle.v = cycle;
+  for (const invalid of [cycle, { e: "x", a: "p", v: 1n, source: "peer-a" }]) {
+    const result = validateSyncAssertions([assertions[0], invalid]);
+    assert.equal(result.ok, false);
+    assert.equal(result.faults[0]?.code, "assertion-shape");
+    assert.equal(result.assertions[0], assertions[0]);
+  }
+});

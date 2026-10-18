@@ -4,8 +4,7 @@ import { assertAssertion, provenanceOf, recognizerFrom } from "./wire.mjs";
 
 test("wire admission preserves permissive historical shape and object identity", () => {
   const candidate = { e: "", a: "", extra: () => "opaque" };
-  // The original static API requires v; runtime admission deliberately does not.
-  // @ts-expect-error Historical runtime admission accepts an absent v; its static type requires it.
+  // The public wire type now describes its preserved absent-v runtime capability.
   assert.equal(assertAssertion(candidate), candidate);
   for (const invalid of [null, false, 0, "wire", {}, { e: "x" }, { e: 1, a: "p" }]) {
     assert.throws(() => {

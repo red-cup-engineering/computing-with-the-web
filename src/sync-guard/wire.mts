@@ -6,7 +6,7 @@ type ChargeValueName = KnowledgeReading;
 export type Assertion = Readonly<{
   e: string;
   a: string;
-  v: unknown;
+  v?: unknown;
   t?: unknown;
   source?: string;
   signature?: { by?: unknown };

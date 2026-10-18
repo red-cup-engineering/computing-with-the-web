@@ -1,5 +1,7 @@
 import type { IncomingHttpHeaders } from "node:http";
-import { readJsonBody, type App, type Context, type Repr, type RequestTrace } from "@red-cup-engineering/computing-with-http/app";
+import { type App, type Context, type Repr, type RequestTrace } from "@red-cup-engineering/computing-with-http/app";
+import { readJsonBody, BodyReadError } from "@red-cup-engineering/http-services-section/body";
+import { traceRequest } from "@red-cup-engineering/http-services-section/request-trace";
 import { authAdmissionReport, type AuthAdmissionReport, type AuthEvidence } from "@red-cup-engineering/computer-web-server/edge/auth";
 import { bearerToken as bearerTokenValue } from "@red-cup-engineering/computing-with-http/codecs/http";
 import {
@@ -103,15 +105,11 @@ export function bearerToken(headers: IncomingHttpHeaders): string | undefined {
 export function syncAuthTrace(headers: IncomingHttpHeaders, options: SyncAuthTraceOptions = {}): RequestTrace {
   const id = options.id ?? "sync-guard.auth";
   const t = options.now ?? String(Date.now());
-  const entries = Object.freeze(Object.entries(headers).flatMap(([key, value]) => {
-    if (value == null) return [];
-    return [{
-      e: id,
-      a: `header.${key.toLowerCase()}`,
-      v: Array.isArray(value) ? value.join(", ") : String(value),
-      t,
-    }];
-  }));
+  // Keep this established header-only carrier while HTTP owns redaction.
+  const traced = traceRequest({ headers, socket: {} }, () => t);
+  const entries = Object.freeze(traced.entries
+    .filter((entry) => entry.a.startsWith("header."))
+    .map((entry) => ({ ...entry, e: id, t })));
   return Object.freeze({
     kind: "web-server.request-trace" as const,
     id,
@@ -143,6 +141,17 @@ export function authorizeBearerReport(
   policy?: TokenPolicy,
   trace: RequestTrace = syncAuthTrace(headers),
 ): SyncAuthReport {
+  // Caller-provided request traces may predate HTTP's diagnostic projection.
+  trace = Object.freeze({ ...trace, entries: Object.freeze(trace.entries.map((entry) => {
+    if (!entry.a.startsWith("header.") && entry.a !== "url") return entry;
+    // Project each witness separately: duplicate/case-variant header claims
+    // remain distinct, and no earlier witness is lost to a map's last value.
+    const projected = traceRequest({ socket: {}, headers: entry.a.startsWith("header.")
+      ? { [entry.a.slice(7)]: String(entry.v) } : {},
+      ...(entry.a === "url" ? { url: String(entry.v) } : {}) }, () => entry.t);
+    const value = projected.entries.find((candidate) => candidate.a === entry.a.toLowerCase())?.v;
+    return { ...entry, v: value };
+  })) });
   if (!policy) {
     const report = authAdmissionReport({
       trace,
@@ -163,7 +172,7 @@ export function authorizeBearerReport(
     const report = authAdmissionReport({ trace, evidence, now: traceInstant(trace) });
     return { ok: false, status: 403, token, reason: report.reason, report };
   }
-  const evidence: readonly AuthEvidence[] = [{ source: "api-key", admitted: true, claims: { token, source } }];
+  const evidence: readonly AuthEvidence[] = [{ source: "api-key", admitted: true, claims: { source: source === token ? "[redacted]" : source } }];
   const report = authAdmissionReport({ trace, evidence, now: traceInstant(trace) });
   return { ok: true, status: 200, token, source, report };
 }
@@ -176,10 +185,16 @@ function assertionSize(assertion: unknown): number {
   return Buffer.byteLength(JSON.stringify(assertion) ?? "null", "utf8");
 }
 
+function boundedLimit(value: number | undefined, fallback: number, name: string): number {
+  const limit = value ?? fallback;
+  if (!Number.isSafeInteger(limit) || limit < 0) throw new RangeError(`${name} must be a nonnegative safe integer`);
+  return limit;
+}
+
 export function validateSyncAssertions(input: unknown, options: AssertionValidationOptions = {}): AssertionValidation {
-  const maxAssertions = options.maxAssertions ?? 1000;
-  const maxAssertionBytes = options.maxAssertionBytes ?? 32_768;
-  const maxFieldLength = options.maxFieldLength ?? 512;
+  const maxAssertions = boundedLimit(options.maxAssertions, 1000, "maxAssertions");
+  const maxAssertionBytes = boundedLimit(options.maxAssertionBytes, 32_768, "maxAssertionBytes");
+  const maxFieldLength = boundedLimit(options.maxFieldLength, 512, "maxFieldLength");
   const requireProvenance = options.requireProvenance ?? true;
   const assertions = Array.isArray(input) ? input : [];
   const faults: AssertionFault[] = [];
@@ -203,8 +218,10 @@ export function validateSyncAssertions(input: unknown, options: AssertionValidat
 
   assertions.forEach((candidate, index) => {
     let assertion: Assertion;
+    let size: number;
     try {
       assertion = assertAssertion(candidate as Assertion);
+      size = assertionSize(assertion);
     } catch (error) {
       faults.push(assertionFault(index, "assertion-shape", error instanceof Error ? error.message : String(error)));
       return;
@@ -217,7 +234,7 @@ export function validateSyncAssertions(input: unknown, options: AssertionValidat
       faults.push(assertionFault(index, "assertion-field-too-long", `assertion.e and assertion.a must be at most ${maxFieldLength} characters`));
       return;
     }
-    if (assertionSize(assertion) > maxAssertionBytes) {
+    if (size > maxAssertionBytes) {
       faults.push(assertionFault(index, "assertion-too-large", `assertion exceeds maxAssertionBytes ${maxAssertionBytes}`));
       return;
     }
@@ -296,7 +313,11 @@ export function syncGuardApp(options: SyncGuardAppOptions): App {
   const path = options.path ?? "/sync";
   const requireAuthFor = options.requireAuthFor ?? ["POST"];
   const limiter = options.rateLimit ? createRateLimiter(options.rateLimit) : undefined;
-  const maxBodyBytes = options.maxBodyBytes ?? 1_048_576;
+  const maxBodyBytes = boundedLimit(options.maxBodyBytes, 1_048_576, "maxBodyBytes");
+  // Refuse invalid configuration at construction, before export/import effects.
+  const maxAssertions = boundedLimit(options.maxAssertions, 1000, "maxAssertions");
+  const maxAssertionBytes = boundedLimit(options.maxAssertionBytes, 32_768, "maxAssertionBytes");
+  const maxFieldLength = boundedLimit(options.maxFieldLength, 512, "maxFieldLength");
   return {
     resources: [
       {
@@ -334,15 +355,23 @@ export function syncGuardApp(options: SyncGuardAppOptions): App {
             return repr(200, { assertions }, headers);
           }
 
-          const body = await readJsonBody(ctx.req, { maxBytes: maxBodyBytes, empty: {} }) as { assertions?: unknown };
+          let body: unknown;
+          try {
+            body = await readJsonBody(ctx.req, { maxBytes: maxBodyBytes, empty: {} });
+          } catch (error) {
+            if (!(error instanceof BodyReadError)) throw error;
+            return repr(error.status, { error: error.message }, headers);
+          }
+          const input = typeof body === "object" && body !== null && !Array.isArray(body)
+            && "assertions" in body ? body.assertions : undefined;
           const validationOptions: AssertionValidationOptions = {
-            ...(options.maxAssertions !== undefined ? { maxAssertions: options.maxAssertions } : {}),
-            ...(options.maxAssertionBytes !== undefined ? { maxAssertionBytes: options.maxAssertionBytes } : {}),
-            ...(options.maxFieldLength !== undefined ? { maxFieldLength: options.maxFieldLength } : {}),
+            maxAssertions,
+            maxAssertionBytes,
+            maxFieldLength,
             ...(auth.source ? { expectedSource: auth.source } : {}),
             ...(options.recognize !== undefined ? { recognize: options.recognize } : {}),
           };
-          const validation = validateSyncAssertions(body.assertions, validationOptions);
+          const validation = validateSyncAssertions(input, validationOptions);
           if (!validation.ok) {
             return repr(400, { error: "invalid sync assertions", faults: validation.faults }, headers);
           }
