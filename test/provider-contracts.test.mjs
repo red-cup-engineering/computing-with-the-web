@@ -1,9 +1,11 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { IncomingMessage } from "node:http";
+import { createServer, IncomingMessage } from "node:http";
 import { Socket } from "node:net";
 import { attrs, el, escapeHtml } from "../dist/html.mjs";
-import { render, minimal, atelier } from "../dist/theming/index.mjs";
+import { decodeTheme, render, minimal, atelier, themePalette } from "../dist/theming/index.mjs";
+import { themePalette as canonicalPalette } from "@red-cup-engineering/web-theming-service/theming-computer";
+import { nativeHttpHandler } from "@red-cup-engineering/computer-web-server/native-application";
 import { getSignedCookie } from "../dist/session-carrier/cookies.mjs";
 import { signCookieValue, unsignCookieValue, serializeCookieHeader } from "@red-cup-engineering/computing-with-http/codecs/cookie";
 import { signCookieValue as canonicalSign } from "@red-cup-engineering/computer-serialized-content-engineering-services-section/services/http-data-services-section/src/signed-cookie";
@@ -43,4 +45,44 @@ test("canonical HTTP reads existing signed cookies without changing bytes or ref
   req.headers.cookie = "session=unsigned; session=ignored; broken";
   assert.equal(getSignedCookie(req, name, secret), null);
   assert.throws(() => getSignedCookie(req, "bad name", secret), TypeError);
+});
+
+
+test("canonical Data palettes reach native HTTP, preserving the article and refusing malformed seeds", async () => {
+  assert.equal(themePalette, canonicalPalette);
+  const article = "<article><p>Received shared palette &amp; unchanged body.</p></article>";
+  let completed = 0;
+  const server = createServer(nativeHttpHandler({ resources: [{
+    match: "/theme", methods: ["GET"], handler(ctx) {
+      const theme = decodeTheme({ name: "received", seeds: {
+        ink: "#0a0a0a", surface: "#f2ead8", accent: ctx.url.searchParams.get("accent"),
+      }, type: { sans: "system-ui" } });
+      const body = render(theme, article, { title: "Shared CSS registry" });
+      completed++;
+      return { type: "text/html; charset=utf-8", body };
+    },
+  }] }));
+  await new Promise((resolve, reject) => {
+    server.once("error", reject);
+    server.listen(0, "127.0.0.1", resolve);
+  });
+  const origin = `http://127.0.0.1:${server.address().port}`;
+  try {
+    for (const accent of ["#3d5588", "#ff4530"]) {
+      const reply = await fetch(`${origin}/theme?accent=${encodeURIComponent(accent)}`);
+      assert.equal(reply.status, 200);
+      assert.match(reply.headers.get("content-type"), /text\/html/);
+      const body = await reply.text();
+      assert.ok(body.includes(article));
+      assert.ok(body.includes(`--accent: ${accent}`));
+      assert.match(body, /@media \(prefers-color-scheme: dark\)/);
+    }
+    const refused = await fetch(`${origin}/theme?accent=%231g0000`);
+    assert.equal(refused.status, 500);
+    await refused.text();
+    assert.equal(completed, 2, "malformed input must not reach completed HTML delivery");
+  } finally {
+    server.closeIdleConnections();
+    await new Promise((resolve) => server.close(resolve));
+  }
 });
