@@ -373,7 +373,17 @@ export function syncGuardApp(options: SyncGuardAppOptions): App {
           };
           const validation = validateSyncAssertions(input, validationOptions);
           if (!validation.ok) {
-            return repr(400, { error: "invalid sync assertions", faults: validation.faults }, headers);
+            // Some established policies use the credential itself as source ID.
+            // Keep comparison/decision semantics, but never echo that identity in
+            // the diagnostic source faults. The standalone validator has no token.
+            const faults = auth.token && auth.source === auth.token
+              ? validation.faults.map((fault) => fault.code === "assertion-source-mismatch"
+                ? { ...fault, reason: "assertion source must match authenticated source" }
+                : fault.code === "assertion-source-unrecognized"
+                  ? { ...fault, reason: "assertion source is not recognized" }
+                  : fault)
+              : validation.faults;
+            return repr(400, { error: "invalid sync assertions", faults }, headers);
           }
           const imported = await options.importAssertions(validation.assertions);
           return repr(200, { imported, accepted: validation.assertions.length }, headers);

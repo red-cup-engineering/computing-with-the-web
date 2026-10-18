@@ -285,3 +285,29 @@ test("shared bearer consumers retain native credential decisions and refusal bef
     }
   }
 });
+
+test("token-as-source policies keep refused HTTP source faults credential-free", async () => {
+  for (const tokens of [["fault-secret"], new Set(["fault-secret"]), () => true, { "fault-secret": "fault-secret" }]) {
+    let effects = 0;
+    const recognition = new Map([["fault-secret", false]]);
+    const app = syncGuardApp({ tokens, recognize: recognition,
+      exportAssertions: () => { effects++; return []; }, importAssertions: () => { effects++; return 0; } });
+    await serve(app, async (base) => {
+      for (const [source, code] of [["other-peer", "assertion-source-mismatch"], ["fault-secret", "assertion-source-unrecognized"]]) {
+        const response = await fetch(`${base}/sync`, { method: "POST", headers: { authorization: "Bearer fault-secret" },
+          body: JSON.stringify({ assertions: [{ e: "work/sync-guard", a: "status", v: "refused", source }] }) });
+        assert.equal(response.status, 400);
+        const body = await response.text();
+        assert.equal(body.includes("fault-secret"), false);
+        assert.equal(JSON.parse(body).faults[0].code, code);
+      }
+      assert.equal(effects, 0);
+      recognition.set("fault-secret", true);
+      const allowed = await fetch(`${base}/sync`, { method: "POST", headers: { authorization: "Bearer fault-secret" },
+        body: JSON.stringify({ assertions: [{ e: "work/sync-guard", a: "status", v: "received", source: "fault-secret" }] }) });
+      assert.equal(allowed.status, 200);
+      assert.deepEqual(await allowed.json(), { imported: 0, accepted: 1 });
+      assert.equal(effects, 1, "permitted token-as-source policy still invokes its import callback");
+    });
+  }
+});
