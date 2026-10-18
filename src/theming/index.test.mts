@@ -26,4 +26,3 @@ test("theme contract is structural and exposes typed lesson admission judgments"
   assert.ok(bad.entries[0]?.predicate);
   assert.match(bad.reasons.join("\n"), /theme\.header/);
 });
-

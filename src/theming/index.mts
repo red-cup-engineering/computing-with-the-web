@@ -1,6 +1,5 @@
 import { mark, webEvidence, type WebEvidence, type Utterance } from "../evidence.mjs";
 import { joinKnowledgeReadings, type KnowledgeReading } from "../taxonomy/four.mjs";
-import type { Theme } from "@red-cup-engineering/web-theming-service/theming";
 
 // Data owns deterministic document/CSS rendering; Web owns its evidence admission.
 export { THEME_MEMBERS, attrs, el, escapeHtml, meta, viewportMeta, charsetMeta, THEME_TOKEN_ROLES, tokenVar, tokenCss, composeTokens, paletteCss, BASE_CSS, COMPONENT_CSS, assembleCss, derivePalette, deriveDark, themePalette, decodeTheme, isTheme, assertTheme, normalizeContext, render, renderNav, minimal, atelier } from "@red-cup-engineering/web-theming-service/theming";
@@ -80,4 +79,3 @@ export function admitTheme(value: unknown): ThemeAdmission {
     reasons: judgments.map((judgment) => judgment.reason),
   };
 }
-
