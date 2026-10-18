@@ -161,9 +161,12 @@ export function queryTriples(folds: readonly FoldedEvidence[], pattern: TriplePa
 }
 
 function clampLimit(limit: number | undefined, maxLimit = DEFAULT_MAX_LIMIT): number {
-  if (limit === undefined) return DEFAULT_LIMIT;
-  if (!Number.isSafeInteger(limit) || limit <= 0) return DEFAULT_LIMIT;
-  return Math.min(limit, maxLimit);
+  if (!Number.isSafeInteger(maxLimit) || maxLimit <= 0) {
+    throw new TypeError("maxLimit must be a positive safe integer");
+  }
+  const requested = limit === undefined || !Number.isSafeInteger(limit) || limit <= 0
+    ? DEFAULT_LIMIT : limit;
+  return Math.min(requested, maxLimit);
 }
 
 function clampPage(page: number | undefined, totalPages: number): number {
