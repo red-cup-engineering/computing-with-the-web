@@ -14,6 +14,7 @@ export * as syncGuard from "./sync-guard/index.mjs";
 export * as theming from "./theming/index.mjs";
 export * as themingComputer from "./theming-computer/index.mjs";
 export * as topology from "./topology/index.mjs";
-export * as webmention from "./webmention/index.mjs";
+// Webmention is owned by @red-cup-engineering/webmention-service; import it directly.
+// The retired implementation and its regression source remain in this repository's Git history.
 export * as triplePatternFragments from "./triple-pattern-fragments/index.mjs";
 export * as taxonomy from "./taxonomy/index.mjs";

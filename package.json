@@ -11,7 +11,7 @@
     "clean": "rm -rf dist .tmp/test-dist",
     "check": "tsc --noEmit",
     "build": "tsc -p tsconfig.build.json",
-    "test": "npm run build && tsc -p tsconfig.test.json && node --test .tmp/test-dist/webmention/index.test.mjs .tmp/test-dist/triple-pattern-fragments/index.test.mjs .tmp/test-dist/theming-computer/index.test.mjs .tmp/test-dist/theming/index.test.mjs .tmp/test-dist/taxonomy/index.test.mjs .tmp/test-dist/taxonomy/receiving.test.mjs src/taxonomy/index.http.test.mjs test/swarm-taxonomy.test.mjs .tmp/test-dist/evidence.test.mjs .tmp/test-dist/sync-guard/wire.test.mjs .tmp/test-dist/sync-guard/index.test.mjs .tmp/test-dist/topology/traversal.test.mjs .tmp/test-dist/pagination/history.test.mjs .tmp/test-dist/theming/admission.test.mjs test/indieauth-token.test.mjs test/evidence-boundary.test.mjs test/sync-guard.http.test.mjs test/provider-contracts.test.mjs",
+    "test": "npm run build && tsc -p tsconfig.test.json && node --test .tmp/test-dist/triple-pattern-fragments/index.test.mjs .tmp/test-dist/theming-computer/index.test.mjs .tmp/test-dist/theming/index.test.mjs .tmp/test-dist/taxonomy/index.test.mjs .tmp/test-dist/taxonomy/receiving.test.mjs src/taxonomy/index.http.test.mjs test/swarm-taxonomy.test.mjs .tmp/test-dist/evidence.test.mjs .tmp/test-dist/sync-guard/wire.test.mjs .tmp/test-dist/sync-guard/index.test.mjs .tmp/test-dist/topology/traversal.test.mjs .tmp/test-dist/pagination/history.test.mjs .tmp/test-dist/theming/admission.test.mjs test/indieauth-token.test.mjs test/evidence-boundary.test.mjs test/sync-guard.http.test.mjs test/provider-contracts.test.mjs",
     "prepack": "npm run rebuild",
     "rebuild": "npm run clean && npm run build"
   },
@@ -61,10 +61,6 @@
     "./microsub": {
       "types": "./dist/microsub/index.d.mts",
       "import": "./dist/microsub/index.mjs"
-    },
-    "./webmention": {
-      "types": "./dist/webmention/index.d.mts",
-      "import": "./dist/webmention/index.mjs"
     },
     "./oauth-google": {
       "types": "./dist/oauth-google/index.d.mts",
