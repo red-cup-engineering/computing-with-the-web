@@ -11,7 +11,7 @@
     "clean": "rm -rf dist .tmp/test-dist",
     "check": "tsc --noEmit",
     "build": "tsc -p tsconfig.build.json",
-    "test": "npm run build && tsc -p tsconfig.test.json && node --test .tmp/test-dist/triple-pattern-fragments/index.test.mjs .tmp/test-dist/theming-computer/index.test.mjs .tmp/test-dist/theming/index.test.mjs .tmp/test-dist/taxonomy/index.test.mjs .tmp/test-dist/taxonomy/receiving.test.mjs src/taxonomy/index.http.test.mjs test/swarm-taxonomy.test.mjs .tmp/test-dist/evidence.test.mjs .tmp/test-dist/sync-guard/wire.test.mjs .tmp/test-dist/sync-guard/index.test.mjs .tmp/test-dist/topology/traversal.test.mjs .tmp/test-dist/pagination/history.test.mjs .tmp/test-dist/theming/admission.test.mjs test/indieauth-token.test.mjs test/evidence-boundary.test.mjs test/sync-guard.http.test.mjs test/provider-contracts.test.mjs",
+    "test": "npm run build && tsc -p tsconfig.test.json && node --test .tmp/test-dist/triple-pattern-fragments/index.test.mjs .tmp/test-dist/theming/index.test.mjs .tmp/test-dist/taxonomy/index.test.mjs .tmp/test-dist/taxonomy/receiving.test.mjs src/taxonomy/index.http.test.mjs test/swarm-taxonomy.test.mjs .tmp/test-dist/evidence.test.mjs .tmp/test-dist/sync-guard/wire.test.mjs .tmp/test-dist/sync-guard/index.test.mjs .tmp/test-dist/topology/traversal.test.mjs .tmp/test-dist/pagination/history.test.mjs .tmp/test-dist/theming/admission.test.mjs test/indieauth-token.test.mjs test/evidence-boundary.test.mjs test/sync-guard.http.test.mjs test/provider-contracts.test.mjs",
     "prepack": "npm run rebuild",
     "rebuild": "npm run clean && npm run build"
   },
@@ -37,10 +37,6 @@
     "./theming": {
       "types": "./dist/theming/index.d.mts",
       "import": "./dist/theming/index.mjs"
-    },
-    "./theming-computer": {
-      "types": "./dist/theming-computer/index.d.mts",
-      "import": "./dist/theming-computer/index.mjs"
     },
     "./feed": {
       "types": "./dist/feed/index.d.mts",
@@ -106,7 +102,8 @@
     "@red-cup-engineering/json-services-section": "0.4.0",
     "@red-cup-engineering/signcell": "0.4.2",
     "@red-cup-engineering/http-services-section": "0.6.2",
-    "@red-cup-engineering/html-structural-projection-service": "0.3.3"
+    "@red-cup-engineering/html-structural-projection-service": "0.3.3",
+    "@red-cup-engineering/web-theming-service": "0.0.8"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",

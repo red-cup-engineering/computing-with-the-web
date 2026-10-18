@@ -12,7 +12,6 @@ export * as pagination from "./pagination/index.mjs";
 export * as sessionCarrier from "./session-carrier/index.mjs";
 export * as syncGuard from "./sync-guard/index.mjs";
 export * as theming from "./theming/index.mjs";
-export * as themingComputer from "./theming-computer/index.mjs";
 export * as topology from "./topology/index.mjs";
 // Webmention is owned by @red-cup-engineering/webmention-service; import it directly.
 // The retired implementation and its regression source remain in this repository's Git history.

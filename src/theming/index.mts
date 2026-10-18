@@ -9,7 +9,7 @@ import {
   type TypeTokens,
   type ThemeTokens,
   type ThemePalette,
-} from "../theming-computer/index.mjs";
+} from "@red-cup-engineering/web-theming-service/theming-computer";
 
 export { escapeHtmlText as escapeHtml };
 
@@ -127,8 +127,8 @@ export function charsetMeta(): string {
 // web-theming-computer, so a new role is added once, next to the code that
 // produces its value. web-theming owns only the *renderer* below; it re-exports
 // the vocabulary so this module stays the single import site for theme authors.
-export { THEME_TOKEN_ROLES, tokenVar } from "../theming-computer/index.mjs";
-export type { ThemeTokens, ThemePalette } from "../theming-computer/index.mjs";
+export { THEME_TOKEN_ROLES, tokenVar } from "@red-cup-engineering/web-theming-service/theming-computer";
+export type { ThemeTokens, ThemePalette } from "@red-cup-engineering/web-theming-service/theming-computer";
 
 export type TokenCssOptions = {
   /** Selector to attach the variables to (default `:root`). */
@@ -319,8 +319,8 @@ export function assembleCss(palette: ThemePalette, ...chrome: readonly string[])
 // decoder/builder, not a round-tripping codec.
 
 /** Palette derivation, re-exported so web-theming is the single import site. */
-export { derivePalette, deriveDark, themePalette } from "../theming-computer/index.mjs";
-export type { PaletteSeeds, TypeTokens } from "../theming-computer/index.mjs";
+export { derivePalette, deriveDark, themePalette } from "@red-cup-engineering/web-theming-service/theming-computer";
+export type { PaletteSeeds, TypeTokens } from "@red-cup-engineering/web-theming-service/theming-computer";
 
 export type ThemeSpec = {
   /** Theme name; sets `<body class="theme-NAME">`. */
