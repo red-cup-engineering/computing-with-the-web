@@ -18,6 +18,10 @@ test("theme violations assert their own contrary predicates with preserved reaso
     assert.deepEqual(entry.cell.for,[entry.utterance]);
     assert.deepEqual(entry.cell.against,[]);
   }
+  // The shared structural judgment does not replace Web's stricter evidence encoding.
+  for(const name of ["\ud800", "\udfff"]){
+    assert.throws(()=>admitTheme({...minimal,name}), /unpaired Unicode surrogate/);
+  }
   for(const invalid of [null,1,{}, {name:""}, {...minimal,name:""}, {...minimal,css:4}]){
     assert.equal(admitTheme(invalid).admitted,false);
   }
