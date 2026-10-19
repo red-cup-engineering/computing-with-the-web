@@ -9,7 +9,6 @@ export * as micropub from "./micropub/index.mjs";
 export * as microsub from "./microsub/index.mjs";
 export * as oauthGoogle from "./oauth-google/index.mjs";
 export * as pagination from "./pagination/index.mjs";
-export * as sessionCarrier from "./session-carrier/index.mjs";
 export * as syncGuard from "./sync-guard/index.mjs";
 export * as theming from "./theming/index.mjs";
 export * as topology from "./topology/index.mjs";

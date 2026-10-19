@@ -74,10 +74,6 @@
       "types": "./dist/mcp/index.d.mts",
       "import": "./dist/mcp/index.mjs"
     },
-    "./session-carrier": {
-      "types": "./dist/session-carrier/index.d.mts",
-      "import": "./dist/session-carrier/index.mjs"
-    },
     "./sync-guard": {
       "types": "./dist/sync-guard/index.d.mts",
       "import": "./dist/sync-guard/index.mjs"
