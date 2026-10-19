@@ -1,6 +1,5 @@
 import type { IncomingHttpHeaders } from "node:http";
-import { type App, type Context, type Repr, type RequestTrace } from "@red-cup-engineering/computing-with-http/app";
-import { readJsonBody, BodyReadError } from "@red-cup-engineering/http-services-section/body";
+import type { RequestTrace } from "@red-cup-engineering/computing-with-http/app";
 import { traceRequest } from "@red-cup-engineering/http-services-section/request-trace";
 import { authAdmissionReport, type AuthAdmissionReport, type AuthEvidence } from "@red-cup-engineering/computer-web-server/edge/auth";
 import { bearerToken as bearerTokenValue } from "@red-cup-engineering/computing-with-http/codecs/http";
@@ -76,21 +75,6 @@ export type RateLimitDecision = {
   remaining: number;
   resetAt: number;
   retryAfter?: number;
-};
-
-export type SyncGuardAppOptions = {
-  exportAssertions: (subject?: string) => AssertionTrace | Promise<AssertionTrace>;
-  importAssertions: (assertions: AssertionTrace) => number | Promise<number>;
-  path?: string;
-  tokens?: TokenPolicy;
-  requireAuthFor?: readonly string[];
-  recognize?: RecognitionInput;
-  maxAssertions?: number;
-  maxBodyBytes?: number;
-  maxAssertionBytes?: number;
-  maxFieldLength?: number;
-  rateLimit?: RateLimitOptions;
-  rateLimitKey?: (ctx: Context, auth: AuthDecision) => string;
 };
 
 // The instant the trace was taken: its entries carry it, so claims recorded from it share that moment.
@@ -283,113 +267,6 @@ export function createRateLimiter(options: RateLimitOptions): (key: string) => R
       return { ok: false, limit: options.limit, remaining: 0, resetAt: window.resetAt, retryAfter };
     }
     return { ok: true, limit: options.limit, remaining, resetAt: window.resetAt };
-  };
-}
-
-function repr(status: number, body: unknown, headers: Record<string, string> = {}): Repr {
-  return {
-    status,
-    type: "application/json; charset=utf-8",
-    headers,
-    cacheControl: { noStore: true },
-    body: `${JSON.stringify(body, null, 2)}\n`,
-  };
-}
-
-function methodRequiresAuth(method: string, methods: readonly string[]): boolean {
-  return methods.map((item) => item.toUpperCase()).includes(method.toUpperCase());
-}
-
-function rateLimitHeaders(decision: RateLimitDecision): Record<string, string> {
-  return {
-    "RateLimit-Limit": String(decision.limit),
-    "RateLimit-Remaining": String(decision.remaining),
-    "RateLimit-Reset": String(Math.ceil(decision.resetAt / 1000)),
-    ...(decision.retryAfter !== undefined ? { "Retry-After": String(decision.retryAfter) } : {}),
-  };
-}
-
-export function syncGuardApp(options: SyncGuardAppOptions): App {
-  const path = options.path ?? "/sync";
-  const requireAuthFor = options.requireAuthFor ?? ["POST"];
-  const limiter = options.rateLimit ? createRateLimiter(options.rateLimit) : undefined;
-  const maxBodyBytes = boundedLimit(options.maxBodyBytes, 1_048_576, "maxBodyBytes");
-  // Refuse invalid configuration at construction, before export/import effects.
-  const maxAssertions = boundedLimit(options.maxAssertions, 1000, "maxAssertions");
-  const maxAssertionBytes = boundedLimit(options.maxAssertionBytes, 32_768, "maxAssertionBytes");
-  const maxFieldLength = boundedLimit(options.maxFieldLength, 512, "maxFieldLength");
-  return {
-    resources: [
-      {
-        id: "sync-guard.sync",
-        name: "Sync Guard",
-        route: path,
-        match: path,
-        methods: ["GET", "POST"],
-        produces: ["application/json"],
-        handler: async (ctx) => {
-          const auth: AuthDecision = methodRequiresAuth(ctx.req.method ?? "GET", requireAuthFor)
-            ? authorizeBearerReport(ctx.req.headers, options.tokens, ctx.trace)
-            : { ok: true, status: 200 } satisfies AuthDecision;
-          if (!auth.ok) {
-            const headers = auth.status === 401 ? { "WWW-Authenticate": "Bearer" } : {};
-            return repr(auth.status, { error: auth.reason }, headers);
-          }
-
-          let headers: Record<string, string> = {};
-          if (limiter) {
-            const key = options.rateLimitKey?.(ctx, auth)
-              ?? auth.source
-              ?? ctx.req.socket.remoteAddress
-              ?? "anonymous";
-            const decision = limiter(key);
-            headers = rateLimitHeaders(decision);
-            if (!decision.ok) {
-              return repr(429, { error: "rate limit exceeded" }, headers);
-            }
-          }
-
-          if (ctx.req.method === "GET" || ctx.req.method === "HEAD") {
-            const subject = ctx.url.searchParams.get("subject") ?? undefined;
-            const assertions = await options.exportAssertions(subject);
-            return repr(200, { assertions }, headers);
-          }
-
-          let body: unknown;
-          try {
-            body = await readJsonBody(ctx.req, { maxBytes: maxBodyBytes, empty: {} });
-          } catch (error) {
-            if (!(error instanceof BodyReadError)) throw error;
-            return repr(error.status, { error: error.message }, headers);
-          }
-          const input = typeof body === "object" && body !== null && !Array.isArray(body)
-            && "assertions" in body ? body.assertions : undefined;
-          const validationOptions: AssertionValidationOptions = {
-            maxAssertions,
-            maxAssertionBytes,
-            maxFieldLength,
-            ...(auth.source ? { expectedSource: auth.source } : {}),
-            ...(options.recognize !== undefined ? { recognize: options.recognize } : {}),
-          };
-          const validation = validateSyncAssertions(input, validationOptions);
-          if (!validation.ok) {
-            // Some established policies use the credential itself as source ID.
-            // Keep comparison/decision semantics, but never echo that identity in
-            // the diagnostic source faults. The standalone validator has no token.
-            const faults = auth.token && auth.source === auth.token
-              ? validation.faults.map((fault) => fault.code === "assertion-source-mismatch"
-                ? { ...fault, reason: "assertion source must match authenticated source" }
-                : fault.code === "assertion-source-unrecognized"
-                  ? { ...fault, reason: "assertion source is not recognized" }
-                  : fault)
-              : validation.faults;
-            return repr(400, { error: "invalid sync assertions", faults }, headers);
-          }
-          const imported = await options.importAssertions(validation.assertions);
-          return repr(200, { imported, accepted: validation.assertions.length }, headers);
-        },
-      },
-    ],
   };
 }
 
