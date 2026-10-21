@@ -113,5 +113,10 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/red-cup-engineering/computing-with-the-web.git"
+  },
+  "license": "MIT",
+  "funding": {
+    "type": "individual",
+    "url": "https://github.com/561-group/.github/blob/main/TIPS.md"
   }
 }
