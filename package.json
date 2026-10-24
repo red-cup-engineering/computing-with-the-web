@@ -92,12 +92,12 @@
     "@red-cup-engineering/computer-serialized-content-engineering-services-section": "0.1.0",
     "@red-cup-engineering/computer-web-server": "0.6.2",
     "@red-cup-engineering/computing-with-http": "0.0.0",
-    "@red-cup-engineering/uri-engineering-services-section": "0.1.1",
+    "@red-cup-engineering/uri-services-section": "0.1.1",
     "@red-cup-engineering/computer-triplet-serialized-content-engineering-services-section": "0.1.0",
     "@red-cup-engineering/computer-data-engineering-services-section": "0.2.0",
-    "@red-cup-engineering/json-engineering-services-section": "0.4.0",
+    "@red-cup-engineering/json-services-section": "0.4.0",
     "@red-cup-engineering/signcell": "0.4.2",
-    "@red-cup-engineering/http-engineering-services-section": "0.6.4",
+    "@red-cup-engineering/http-services-section": "0.6.4",
     "@red-cup-engineering/html-structural-projection-service": "0.3.3",
     "@red-cup-engineering/web-theming-service": "0.0.9"
   },
@@ -107,7 +107,7 @@
     "eslint": "10.4.1",
     "typescript": "5.9.3",
     "typescript-eslint": "8.61.0",
-    "@red-cup-engineering/eavt-engineering-services-section": "0.11.2"
+    "@red-cup-engineering/eavt-services-section": "0.11.2"
   },
   "sideEffects": false,
   "repository": {
