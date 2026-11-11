@@ -3,8 +3,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { createServer } from "node:http";
-import { createWebServer } from "@red-cup-engineering/http-services-section/web-application";
-import { handler } from "@red-cup-engineering/http-services-section/web-application-pipeline";
+import { createWebServer } from "@red-cup-engineering/http-engineering-services-section/web-application";
+import { handler } from "@red-cup-engineering/http-engineering-services-section/web-application-pipeline";
 import { taxonomyApp } from "../../dist/taxonomy/index.mjs";
 
 const items = [
