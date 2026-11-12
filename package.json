@@ -89,6 +89,7 @@
     }
   },
   "dependencies": {
+    "@red-cup-engineering/metrologic": "^0.22.1",
     "@red-cup-engineering/computer-serialized-content-engineering-services-section": "0.1.0",
     "@red-cup-engineering/computer-web-server": "0.6.2",
     "@red-cup-engineering/computing-with-http": "0.0.0",

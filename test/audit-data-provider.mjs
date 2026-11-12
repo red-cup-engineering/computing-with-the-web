@@ -6,7 +6,7 @@ import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { resolve } from "node:path";
 import { pathToFileURL } from "node:url";
-import * as installed from "@red-cup-engineering/computer-data-engineering-services-section/four";
+import * as installed from "@red-cup-engineering/metrologic/four";
 
 const sourcePath = process.argv[2];
 if (!sourcePath) throw new TypeError("Provide the pinned Data src/four.mjs");
