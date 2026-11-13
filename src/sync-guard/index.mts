@@ -1,6 +1,6 @@
 import type { IncomingHttpHeaders } from "node:http";
 import type { RequestTrace } from "@red-cup-engineering/computing-with-http/app";
-import { traceRequest } from "@red-cup-engineering/http-services-section/request-trace";
+import { traceRequest } from "@red-cup-engineering/http-engineering-services-section/request-trace";
 import { authAdmissionReport, type AuthAdmissionReport, type AuthEvidence } from "@red-cup-engineering/computer-web-server/edge/auth";
 import { bearerToken as bearerTokenValue } from "@red-cup-engineering/computing-with-http/codecs/http";
 import {
