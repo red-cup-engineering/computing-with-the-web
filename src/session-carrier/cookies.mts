@@ -1,7 +1,7 @@
 import { createRequire } from "node:module";
 import type { IncomingMessage } from "node:http";
 
-const owner: unknown = createRequire(import.meta.url)("@red-cup-engineering/http-services-section/cookies");
+const owner: unknown = createRequire(import.meta.url)("@red-cup-engineering/http-engineering-services-section/cookies");
 if (typeof owner !== "object" || owner === null || !("getSignedCookie" in owner)
   || typeof owner.getSignedCookie !== "function") {
   throw new TypeError("HTTP cookies must export getSignedCookie");
