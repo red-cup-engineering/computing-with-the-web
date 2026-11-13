@@ -81,7 +81,7 @@ export function feedApp(options: FeedAppOptions): App {
     robots: "/robots.txt",
     ...(options.paths ?? {}),
   };
-  const sitemapUrls: readonly SitemapUrl[] = options.sitemapUrls ?? items.map((item) => {
+  const sitemapUrls = (): readonly SitemapUrl[] => options.sitemapUrls ?? items.map((item) => {
     const lastmod = item.updated ?? item.published;
     return {
       loc: item.url,
@@ -144,7 +144,7 @@ export function feedApp(options: FeedAppOptions): App {
       name: "Sitemap",
       methods: ["GET"],
       produces: ["application/xml"],
-      handler: () => repr("application/xml; charset=utf-8", options.sitemapRefs ? sitemapIndex(options.sitemapRefs) : sitemap(sitemapUrls)),
+      handler: () => repr("application/xml; charset=utf-8", options.sitemapRefs ? sitemapIndex(options.sitemapRefs) : sitemap(sitemapUrls())),
     },
   ];
 
