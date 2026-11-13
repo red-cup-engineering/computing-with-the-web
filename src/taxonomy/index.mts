@@ -2,7 +2,7 @@
 // Source blob 3ef74ce51eb2b5c8e5fdf7cad0f2826798bce470; source authorship/history retained.
 import { htmlRepr, jsonRepr, textRepr, type App, type Repr, type Resource } from "@red-cup-engineering/computing-with-http/app";
 import { cacheControl as serializeCacheControl } from "@red-cup-engineering/computing-with-http/codecs/http";
-import { assertHttpUrl as assertAbsoluteUrl } from "@red-cup-engineering/uri-services-section/http-url";
+import { assertHttpUrl as assertAbsoluteUrl } from "@red-cup-engineering/uri-engineering-services-section/http-url";
 import { escapeHtml } from "../html.mjs";
 import { pageCount } from "../pagination/count.mjs";
 import { joinKnowledgeReadings, type KnowledgeReading } from "./four.mjs";

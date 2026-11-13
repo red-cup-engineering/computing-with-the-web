@@ -4,7 +4,7 @@ import type { App, Repr } from "@red-cup-engineering/computing-with-http/app";
 import { mark, webEvidence, type Utterance, type WebEvidence } from "../evidence.mjs";
 import { joinKnowledgeReadings, type KnowledgeReading } from "../taxonomy/four.mjs";
 import { linkHeader } from "@red-cup-engineering/computing-with-http/codecs/http";
-import { assertHttpUrl } from "@red-cup-engineering/uri-services-section/http-url";
+import { assertHttpUrl } from "@red-cup-engineering/uri-engineering-services-section/http-url";
 import { escapeHtmlText } from "../feed/index.mjs";
 
 export type PageLinks = {

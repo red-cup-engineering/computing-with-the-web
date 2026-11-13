@@ -1,8 +1,8 @@
 import { createHash, createHmac, randomBytes, timingSafeEqual } from "node:crypto";
 import { jsonRepr, readFormBody, wellKnown, type App, type Repr } from "@red-cup-engineering/computing-with-http/app";
 import { parseLinkHeader } from "@red-cup-engineering/computing-with-http/codecs/http";
-import { canonicalJson as canonical } from "@red-cup-engineering/json-services-section/canonical-json";
-import { requireJsonValue } from "@red-cup-engineering/json-services-section/require-json-value";
+import { canonicalJson as canonical } from "@red-cup-engineering/json-engineering-services-section/canonical-json";
+import { requireJsonValue } from "@red-cup-engineering/json-engineering-services-section/require-json-value";
 import { authorizeBearer, bearerToken, type AuthDecision, type TokenPolicy } from "../sync-guard/index.mjs";
 
 export type CodeChallengeMethod = "plain" | "S256";
