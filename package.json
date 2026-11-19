@@ -15,78 +15,12 @@
     "prepack": "npm run rebuild",
     "rebuild": "npm run clean && npm run build"
   },
-  "main": "./dist/index.mjs",
   "types": "./dist/index.d.mts",
   "files": [
-    "dist",
     "package.json"
   ],
   "exports": {
-    ".": {
-      "types": "./dist/index.d.mts",
-      "import": "./dist/index.mjs"
-    },
-    "./topology": {
-      "types": "./dist/topology/index.d.mts",
-      "import": "./dist/topology/index.mjs"
-    },
-    "./jsonrpc": {
-      "types": "./dist/jsonrpc/index.d.mts",
-      "import": "./dist/jsonrpc/index.mjs"
-    },
-    "./theming": {
-      "types": "./dist/theming/index.d.mts",
-      "import": "./dist/theming/index.mjs"
-    },
-    "./feed": {
-      "types": "./dist/feed/index.d.mts",
-      "import": "./dist/feed/index.mjs"
-    },
-    "./pagination": {
-      "types": "./dist/pagination/index.d.mts",
-      "import": "./dist/pagination/index.mjs"
-    },
-    "./indieauth": {
-      "types": "./dist/indieauth/index.d.mts",
-      "import": "./dist/indieauth/index.mjs"
-    },
-    "./micropub": {
-      "types": "./dist/micropub/index.d.mts",
-      "import": "./dist/micropub/index.mjs"
-    },
-    "./microsub": {
-      "types": "./dist/microsub/index.d.mts",
-      "import": "./dist/microsub/index.mjs"
-    },
-    "./oauth-google": {
-      "types": "./dist/oauth-google/index.d.mts",
-      "import": "./dist/oauth-google/index.mjs"
-    },
-    "./federation-discovery": {
-      "types": "./dist/federation-discovery/index.d.mts",
-      "import": "./dist/federation-discovery/index.mjs"
-    },
-    "./activitypub": {
-      "types": "./dist/activitypub/index.d.mts",
-      "import": "./dist/activitypub/index.mjs"
-    },
-    "./mcp": {
-      "types": "./dist/mcp/index.d.mts",
-      "import": "./dist/mcp/index.mjs"
-    },
-    "./sync-guard": {
-      "types": "./dist/sync-guard/index.d.mts",
-      "import": "./dist/sync-guard/index.mjs"
-    },
-    "./package.json": "./package.json",
-    "./triple-pattern-fragments": {
-      "types": "./dist/triple-pattern-fragments/index.d.mts",
-      "import": "./dist/triple-pattern-fragments/index.mjs"
-    },
-    "./taxonomy": {
-      "types": "./dist/taxonomy/index.d.mts",
-      "import": "./dist/taxonomy/index.mjs"
-    }
+    "./package.json": "./package.json"
   },
   "dependencies": {
     "@red-cup-engineering/metrologic": "^0.22.1",
