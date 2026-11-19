@@ -23,7 +23,7 @@ export function assertAssertion(assertion: Assertion): Assertion {
   return assertion;
 }
 
-export function provenanceOf(assertion: Assertion): Provenance | null {
+export function originOf(assertion: Assertion): Provenance | null {
   if (typeof assertion.source === "string" && assertion.source) return Object.freeze({ source: assertion.source, kind: "source" });
   if (assertion.signature && typeof assertion.signature.by === "string" && assertion.signature.by) {
     return Object.freeze({ source: assertion.signature.by, kind: "signature" });

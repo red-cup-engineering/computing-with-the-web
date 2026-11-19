@@ -29,7 +29,7 @@ export type ThemeJudgment = {
   path: string;
 };
 
-export function admitTheme(value: unknown): ThemeAdmission {
+export function validateTheme(value: unknown): ThemeAdmission {
   const { themeName: name, judgments } = dataAdmitTheme(value);
   const subject = mark(Object.freeze(["theme", name] as const));
   // A judgment made good claims satisfaction; a failed judgment claims the
