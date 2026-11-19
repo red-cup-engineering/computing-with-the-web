@@ -1,0 +1,122 @@
+{
+  "name": "@red-cup-engineering/computing-with-the-web",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "description": "Web computing library: the web tier topology, IndieWeb auth and posting, ActivityPub, syndication feeds, pagination, theming, and web-domain app surfaces built on the HTTP primitives and HTTP server.",
+  "engines": {
+    "node": ">=24.2.0"
+  },
+  "scripts": {
+    "clean": "rm -rf dist .tmp/test-dist",
+    "check": "tsc --noEmit",
+    "build": "tsc -p tsconfig.build.json",
+    "test": "npm run build",
+    "prepack": "npm run rebuild",
+    "rebuild": "npm run clean && npm run build"
+  },
+  "main": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
+  "files": [
+    "dist",
+    "package.json"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs"
+    },
+    "./topology": {
+      "types": "./dist/topology/index.d.mts",
+      "import": "./dist/topology/index.mjs"
+    },
+    "./jsonrpc": {
+      "types": "./dist/jsonrpc/index.d.mts",
+      "import": "./dist/jsonrpc/index.mjs"
+    },
+    "./theming": {
+      "types": "./dist/theming/index.d.mts",
+      "import": "./dist/theming/index.mjs"
+    },
+    "./feed": {
+      "types": "./dist/feed/index.d.mts",
+      "import": "./dist/feed/index.mjs"
+    },
+    "./pagination": {
+      "types": "./dist/pagination/index.d.mts",
+      "import": "./dist/pagination/index.mjs"
+    },
+    "./indieauth": {
+      "types": "./dist/indieauth/index.d.mts",
+      "import": "./dist/indieauth/index.mjs"
+    },
+    "./micropub": {
+      "types": "./dist/micropub/index.d.mts",
+      "import": "./dist/micropub/index.mjs"
+    },
+    "./microsub": {
+      "types": "./dist/microsub/index.d.mts",
+      "import": "./dist/microsub/index.mjs"
+    },
+    "./oauth-google": {
+      "types": "./dist/oauth-google/index.d.mts",
+      "import": "./dist/oauth-google/index.mjs"
+    },
+    "./federation-discovery": {
+      "types": "./dist/federation-discovery/index.d.mts",
+      "import": "./dist/federation-discovery/index.mjs"
+    },
+    "./activitypub": {
+      "types": "./dist/activitypub/index.d.mts",
+      "import": "./dist/activitypub/index.mjs"
+    },
+    "./mcp": {
+      "types": "./dist/mcp/index.d.mts",
+      "import": "./dist/mcp/index.mjs"
+    },
+    "./sync-guard": {
+      "types": "./dist/sync-guard/index.d.mts",
+      "import": "./dist/sync-guard/index.mjs"
+    },
+    "./package.json": "./package.json",
+    "./triple-pattern-fragments": {
+      "types": "./dist/triple-pattern-fragments/index.d.mts",
+      "import": "./dist/triple-pattern-fragments/index.mjs"
+    },
+    "./taxonomy": {
+      "types": "./dist/taxonomy/index.d.mts",
+      "import": "./dist/taxonomy/index.mjs"
+    }
+  },
+  "dependencies": {
+    "@red-cup-engineering/metrologic": "^0.22.1",
+    "@red-cup-engineering/computer-serialized-content-engineering-services-section": "^0.6.2",
+    "@red-cup-engineering/computer-web-server": "^0.7.5",
+    "@red-cup-engineering/computing-with-http": "^0.1.0",
+    "@red-cup-engineering/uri-engineering-services-section": "^0.1.7",
+    "@red-cup-engineering/computer-triplet-serialized-content-engineering-services-section": "^0.2.5",
+    "@red-cup-engineering/json-engine": "^0.5.1",
+    "@red-cup-engineering/signcell": "0.18.0-dev.0",
+    "@red-cup-engineering/http-engineering-services-section": "^0.6.6",
+    "@red-cup-engineering/html-engine": "0.1.0",
+    "@red-cup-engineering/web-theming-service": "^0.0.13"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@types/node": "22.7.5",
+    "eslint": "10.4.1",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.61.0",
+    "@red-cup-engineering/eavt-engineering-services-section": "^0.15.1"
+  },
+  "sideEffects": false,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/red-cup-engineering/computing-with-the-web.git"
+  },
+  "license": "MIT",
+  "funding": {
+    "type": "individual",
+    "url": "https://github.com/561-group/.github/blob/main/TIPS.md"
+  }
+}
