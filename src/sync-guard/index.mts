@@ -1,7 +1,7 @@
 import type { IncomingHttpHeaders } from "node:http";
 import type { RequestTrace } from "@red-cup-engineering/computing-with-http/app";
 import { traceRequest } from "@red-cup-engineering/http-engineering-services-section/request-trace";
-import { authAdmissionReport, type AuthAdmissionReport, type AuthEvidence } from "@red-cup-engineering/computer-web-server/edge/auth";
+import { authValidationReport, type AuthAdmissionReport, type AuthEvidence } from "@red-cup-engineering/computer-web-server/edge/auth";
 import { bearerToken as bearerTokenValue } from "@red-cup-engineering/computing-with-http/codecs/http";
 import {
   assertAssertion,
@@ -137,7 +137,7 @@ export function authorizeBearerReport(
     return { ...entry, v: value };
   })) });
   if (!policy) {
-    const report = authAdmissionReport({
+    const report = authValidationReport({
       trace,
       evidence: [{ source: "verify", admitted: true }],
       now: traceInstant(trace),
@@ -147,17 +147,17 @@ export function authorizeBearerReport(
   const token = bearerToken(headers);
   if (!token) {
     const evidence: readonly AuthEvidence[] = [{ source: "missing", admitted: false, reason: "missing bearer token" }];
-    const report = authAdmissionReport({ trace, evidence, now: traceInstant(trace) });
+    const report = authValidationReport({ trace, evidence, now: traceInstant(trace) });
     return { ok: false, status: 401, reason: report.reason, report };
   }
   const source = sourceForToken(token, policy);
   if (!source) {
     const evidence: readonly AuthEvidence[] = [{ source: "api-key", admitted: false, reason: "bearer token is not authorized" }];
-    const report = authAdmissionReport({ trace, evidence, now: traceInstant(trace) });
+    const report = authValidationReport({ trace, evidence, now: traceInstant(trace) });
     return { ok: false, status: 403, token, reason: report.reason, report };
   }
   const evidence: readonly AuthEvidence[] = [{ source: "api-key", admitted: true, claims: { source: source === token ? "[redacted]" : source } }];
-  const report = authAdmissionReport({ trace, evidence, now: traceInstant(trace) });
+  const report = authValidationReport({ trace, evidence, now: traceInstant(trace) });
   return { ok: true, status: 200, token, source, report };
 }
 
