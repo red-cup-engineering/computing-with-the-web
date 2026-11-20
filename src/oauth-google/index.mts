@@ -41,14 +41,14 @@ export function oauthConfigFromEnv(parts: {
     ...(parts.allowedEmails ?? []).map((e) => e.toLowerCase()),
     ...envAllowlist,
   ];
-  const validateEmail = parts.admitEmail
+  const admitEmail = parts.admitEmail
     ?? (allowlist.length > 0 ? (email: string) => allowlist.includes(email.toLowerCase()) : undefined);
   const allowedEmail = parts.allowedEmail ?? env["OAUTH_ALLOWED_EMAIL"];
   return {
     googleClientId: env["GOOGLE_CLIENT_ID"] ?? "",
     googleClientSecret: env["GOOGLE_CLIENT_SECRET"] ?? "",
     publicBaseUrl: parts.publicBaseUrl.replace(/\/$/, ""),
-    ...(validateEmail !== undefined ? { admitEmail: validateEmail } : allowedEmail !== undefined ? { allowedEmail } : {}),
+    ...(admitEmail !== undefined ? { admitEmail } : allowedEmail !== undefined ? { allowedEmail } : {}),
     stateDir: parts.stateDir,
   };
 }

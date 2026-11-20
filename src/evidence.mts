@@ -72,12 +72,12 @@ export function mark(value: unknown): Mark {
 }
 /** The utterance witnesses its own claim; it does not attribute that claim to an actor.
  * Opaque supplied provenance is retained separately and is never coerced to JSON. */
-export function webEvidence(subject: Mark, predicate: Mark, object: Mark, origin?: unknown): WebEvidence {
+export function webEvidence(subject: Mark, predicate: Mark, object: Mark, provenance?: unknown): WebEvidence {
   const entry = { subject, predicate, object };
   const utterance = ownerUtterEvidence(entry);
   if (!isUtterance(utterance)) throw new TypeError("SignCell utterance returned an invalid carrier");
   const cell = ownerCell(subject.value, predicate.value, object.value, { for: [utterance] });
   if (!isCell(cell)) throw new TypeError("SignCell cell returned an invalid carrier");
-  return Object.freeze({ ...entry, ...(origin === undefined ? {} : { provenance: origin }), utterance, cell });
+  return Object.freeze({ ...entry, ...(provenance === undefined ? {} : { provenance }), utterance, cell });
 }
 

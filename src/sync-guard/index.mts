@@ -179,7 +179,7 @@ export function validateSyncAssertions(input: unknown, options: AssertionValidat
   const maxAssertions = boundedLimit(options.maxAssertions, 1000, "maxAssertions");
   const maxAssertionBytes = boundedLimit(options.maxAssertionBytes, 32_768, "maxAssertionBytes");
   const maxFieldLength = boundedLimit(options.maxFieldLength, 512, "maxFieldLength");
-  const requireOrigin = options.requireProvenance ?? true;
+  const requireProvenance = options.requireProvenance ?? true;
   const assertions = Array.isArray(input) ? input : [];
   const faults: AssertionFault[] = [];
   const accepted: Assertion[] = [];
@@ -222,19 +222,19 @@ export function validateSyncAssertions(input: unknown, options: AssertionValidat
       faults.push(assertionFault(index, "assertion-too-large", `assertion exceeds maxAssertionBytes ${maxAssertionBytes}`));
       return;
     }
-    const origin = provenanceOf(assertion);
-    if (requireOrigin && !origin) {
+    const provenance = provenanceOf(assertion);
+    if (requireProvenance && !provenance) {
       faults.push(assertionFault(index, "assertion-no-provenance", "assertion must carry source, signature.by, or t.by provenance"));
       return;
     }
-    if (options.expectedSource && origin?.source !== options.expectedSource) {
+    if (options.expectedSource && provenance?.source !== options.expectedSource) {
       faults.push(assertionFault(index, "assertion-source-mismatch", `assertion source must match authenticated source '${options.expectedSource}'`));
       return;
     }
-    if (recognizes && origin) {
-      const standing = recognizes(origin.source);
+    if (recognizes && provenance) {
+      const standing = recognizes(provenance.source);
       if (standing !== "potential" && standing !== "stable") {
-        faults.push(assertionFault(index, "assertion-source-unrecognized", `assertion source '${origin.source}' is not recognized (${standing})`));
+        faults.push(assertionFault(index, "assertion-source-unrecognized", `assertion source '${provenance.source}' is not recognized (${standing})`));
         return;
       }
     }
