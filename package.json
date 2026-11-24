@@ -1,0 +1,56 @@
+{
+  "name": "@red-cup-engineering/computing-with-the-web",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "description": "Web computing library: the web tier topology, IndieWeb auth and posting, ActivityPub, syndication feeds, pagination, theming, and web-domain app surfaces built on the HTTP primitives and HTTP server.",
+  "engines": {
+    "node": ">=24.2.0"
+  },
+  "scripts": {
+    "clean": "rm -rf dist .tmp/test-dist",
+    "check": "tsc --noEmit",
+    "build": "tsc -p tsconfig.build.json",
+    "test": "npm run build",
+    "prepack": "npm run rebuild",
+    "rebuild": "npm run clean && npm run build"
+  },
+  "types": "./dist/index.d.mts",
+  "files": [
+    "package.json"
+  ],
+  "exports": {
+    "./package.json": "./package.json"
+  },
+  "dependencies": {
+    "@red-cup-engineering/metrologic": "^0.22.1",
+    "@red-cup-engineering/computer-serialized-content-engineering-services-section": "^0.6.2",
+    "@red-cup-engineering/computer-web-server": "^0.7.5",
+    "@red-cup-engineering/computing-with-http": "^0.1.0",
+    "@red-cup-engineering/uri-engineering-services-section": "^0.1.7",
+    "@red-cup-engineering/computer-triplet-serialized-content-engineering-services-section": "^0.2.5",
+    "@red-cup-engineering/json-engine": "^0.5.1",
+    "@red-cup-engineering/signcell": "0.18.0-dev.0",
+    "@red-cup-engineering/http-engineering-services-section": "^0.6.6",
+    "@red-cup-engineering/html-engine": "0.1.0",
+    "@red-cup-engineering/web-theming-service": "^0.0.13"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@types/node": "22.7.5",
+    "eslint": "10.4.1",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.61.0",
+    "@red-cup-engineering/eavt-engineering-services-section": "^0.15.1"
+  },
+  "sideEffects": false,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/red-cup-engineering/computing-with-the-web.git"
+  },
+  "license": "MIT",
+  "funding": {
+    "type": "individual",
+    "url": "https://github.com/561-group/.github/blob/main/TIPS.md"
+  }
+}
