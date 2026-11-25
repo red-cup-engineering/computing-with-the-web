@@ -2,7 +2,7 @@ import { sha256 } from "@red-cup-engineering/semiotic-content-address-system";
 import { createHmac, randomBytes, timingSafeEqual } from "node:crypto";
 import { jsonRepr, readFormBody, wellKnown, type App, type Repr } from "@red-cup-engineering/computing-with-http/app";
 import { parseLinkHeader } from "@red-cup-engineering/computing-with-http/codecs/http";
-import { canonicalJson as canonical } from "@red-cup-engineering/json-engine/canonical-json";
+import { canonicalJson } from "@red-cup-engineering/json-engine/canonical-json";
 import { requireJsonValue } from "@red-cup-engineering/json-engine/require-json-value";
 import { authorizeBearer, bearerToken, type AuthDecision, type TokenPolicy } from "../sync-guard/index.mjs";
 
@@ -405,12 +405,8 @@ function base64url(buffer: Buffer): string {
   return buffer.toString("base64").replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
 }
 
-function canonicalJson(value: unknown): string {
-  return canonical(requireJsonValue(value, "token part"));
-}
-
 function encodeTokenPart(value: unknown): string {
-  return base64url(Buffer.from(canonicalJson(value), "utf8"));
+  return base64url(Buffer.from(canonicalJson(requireJsonValue(value, "token part")), "utf8"));
 }
 
 function decodeTokenPart(part: string): unknown {
