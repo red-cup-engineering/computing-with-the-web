@@ -6,6 +6,7 @@
 // protects: it issues and validates bearer tokens, nothing more. The transport
 // (the `/oauth/*` routes) lives in ./oauth-app.mts.
 
+import { sha256Base64Url } from "@red-cup-engineering/semiotic-content-address-system";
 import crypto from "node:crypto";
 import fs from "node:fs/promises";
 import path from "node:path";
@@ -78,7 +79,7 @@ function randomToken(bytes = 32): string {
 }
 
 function verifyPkce(verifier: string, challenge: string): boolean {
-  const hash = crypto.createHash("sha256").update(verifier, "ascii").digest("base64url");
+  const hash = sha256Base64Url(verifier);
   return hash === challenge;
 }
 

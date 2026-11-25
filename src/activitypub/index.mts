@@ -1,4 +1,5 @@
-import { createHash, createSign, createVerify } from "node:crypto";
+import { bytesToBase64, sha256 } from "@red-cup-engineering/semiotic-content-address-system";
+import { createSign, createVerify } from "node:crypto";
 import type { IncomingHttpHeaders } from "node:http";
 import { jsonRepr, readTextBody, type App, type Repr } from "@red-cup-engineering/computing-with-http/app";
 import { httpDate } from "@red-cup-engineering/computing-with-http/codecs/http";
@@ -245,7 +246,7 @@ function bodyBuffer(body: string | Buffer | undefined): Buffer {
 }
 
 export function activityDigest(body: string | Buffer): string {
-  return `SHA-256=${createHash("sha256").update(bodyBuffer(body)).digest("base64")}`;
+  return `SHA-256=${bytesToBase64(sha256(bodyBuffer(body)))}`;
 }
 
 function requestTarget(url: string): string {

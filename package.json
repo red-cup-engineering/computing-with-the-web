@@ -23,16 +23,17 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
-    "@red-cup-engineering/metrologic": "^0.22.1",
     "@red-cup-engineering/computer-serialized-content-engineering-services-section": "^0.6.2",
+    "@red-cup-engineering/computer-triplet-serialized-content-engineering-services-section": "^0.2.5",
     "@red-cup-engineering/computer-web-server": "^0.7.5",
     "@red-cup-engineering/computing-with-http": "^0.1.0",
-    "@red-cup-engineering/uri-engineering-services-section": "^0.1.7",
-    "@red-cup-engineering/computer-triplet-serialized-content-engineering-services-section": "^0.2.5",
-    "@red-cup-engineering/json-engine": "^0.5.1",
-    "@red-cup-engineering/signcell": "0.18.0-dev.0",
-    "@red-cup-engineering/http-engineering-services-section": "^0.6.6",
     "@red-cup-engineering/html-engine": "0.1.0",
+    "@red-cup-engineering/http-engineering-services-section": "^0.6.6",
+    "@red-cup-engineering/json-engine": "^0.5.1",
+    "@red-cup-engineering/metrologic": "^0.22.1",
+    "@red-cup-engineering/semiotic-content-address-system": "0.1.9",
+    "@red-cup-engineering/signcell": "0.18.0-dev.0",
+    "@red-cup-engineering/uri-engineering-services-section": "^0.1.7",
     "@red-cup-engineering/web-theming-service": "^0.0.13"
   },
   "devDependencies": {

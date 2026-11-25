@@ -1,4 +1,5 @@
-import { createHash, createHmac, randomBytes, timingSafeEqual } from "node:crypto";
+import { sha256 } from "@red-cup-engineering/semiotic-content-address-system";
+import { createHmac, randomBytes, timingSafeEqual } from "node:crypto";
 import { jsonRepr, readFormBody, wellKnown, type App, type Repr } from "@red-cup-engineering/computing-with-http/app";
 import { parseLinkHeader } from "@red-cup-engineering/computing-with-http/codecs/http";
 import { canonicalJson as canonical } from "@red-cup-engineering/json-engine/canonical-json";
@@ -502,7 +503,7 @@ function sameString(left: string, right: string): boolean {
 export function pkceChallenge(verifier: string, method: CodeChallengeMethod): string {
   if (!PKCE.test(verifier)) throw new TypeError("code_verifier must be 43-128 PKCE characters");
   if (method === "plain") return verifier;
-  return base64url(createHash("sha256").update(verifier).digest());
+  return base64url(Buffer.from(sha256(verifier)));
 }
 
 export function verifyPkce(verifier: string, challenge: string, method: CodeChallengeMethod): boolean {
